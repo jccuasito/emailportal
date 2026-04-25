@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CSV Upload (Upsert + No Email Support)</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+
+<body>
+
+<input type="file" id="file" />
+<button onclick="upload()">Upload CSV</button>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCY1OJRqCXpaqlM8Pj9F_k_it8jhC311I4",
+  authDomain: "email-checker-24db4.firebaseapp.com",
+  projectId: "email-checker-24db4",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// simple fallback ID generator
+function generateId(row) {
+  return "noemail_" + Math.random().toString(36).substring(2, 10);
+}
+
+window.upload = function () {
+  const file = document.getElementById("file").files[0];
+
+  if (!file) {
+    alert("Walang file!");
+    return;
+  }
+
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+
+    complete: async function (results) {
+
+      let successCount = 0;
+      let failCount = 0;
+
+      for (const row of results.data) {
+
+        const email = row.Email?.trim().toLowerCase();
+
+        // 🔥 KEY LOGIC: email OR fallback ID
+        const docId = email ? email : generateId(row);
+
+        try {
+          await setDoc(doc(db, "employees", docId), {
+            Name: row.Name?.trim() || "",
+            Email: email || "NO EMAIL",
+            Status: row.Status?.trim() || "",
+            Agency: row.Agency?.trim() || "",
+            Posting: row.Posting?.trim() || "",
+            updatedAt: new Date().toISOString()
+          });
+
+          successCount++;
+
+        } catch (err) {
+          console.error("Error row:", row, err);
+          failCount++;
+        }
+      }
+
+      alert(
+        `Upload Done!\n` +
+        `Saved/Updated: ${successCount}\n` +
+        `Failed: ${failCount}`
+      );
+    }
+  });
+};
+</script>
+
+</body>
+</html>

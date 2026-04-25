@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Add Employee</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 50px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      width: 250px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Add Employee Data</h2>
+
+<input id="name" placeholder="Name"><br>
+<input id="email" placeholder="Email"><br>
+<input id="status" placeholder="Status"><br>
+<input id="agency" placeholder="Agency"><br>
+<input id="posting" placeholder="Posting"><br>
+
+<button onclick="addData()">Add</button>
+
+<p id="result"></p>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCY1OJRqCXpaqlM8Pj9fK_itg8jhC311I4",
+  authDomain: "email-checker-24db4.firebaseapp.com",
+  projectId: "email-checker-24db4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.addData = async function() {
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value.toLowerCase();
+  const status = document.getElementById("status").value;
+  const agency = document.getElementById("agency").value;
+  const posting = document.getElementById("posting").value;
+
+  try {
+    await addDoc(collection(db, "employees"), {
+      Name: name,
+      Email: email,
+      Status: status,
+      Agency: agency,
+      Posting: posting
+    });
+
+    document.getElementById("result").innerText = "Added successfully!";
+  } catch (e) {
+    document.getElementById("result").innerText = "Error adding data";
+    console.error(e);
+  }
+};
+</script>
+
+</body>
+</html>

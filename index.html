@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Email Checker</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 100px;
+      background: #f5f5f5;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 5px;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Check your Email Status</h2>
+
+<input type="email" id="emailInput" placeholder="Enter your email">
+<button onclick="checkEmail()">Check</button>
+
+<div id="result"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// 🔥 Firebase config mo
+const firebaseConfig = {
+  apiKey: "AIzaSyCY1OJRqCXpaqlM8Pj9fK_itg8jhC311I4",
+  authDomain: "email-checker-24db4.firebaseapp.com",
+  projectId: "email-checker-24db4",
+  storageBucket: "email-checker-24db4.firebasestorage.app",
+  messagingSenderId: "484926942088",
+  appId: "1:484926942088:web:540ca7e3b19868f6e8e83d"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.checkEmail = async function() {
+  const email = document.getElementById("emailInput").value.trim().toLowerCase();
+  const resultDiv = document.getElementById("result");
+
+  // validation
+  if (!email.includes("@")) {
+    resultDiv.innerHTML = "Invalid email format.";
+    return;
+  }
+
+  const q = query(collection(db, "employees"), where("Email", "==", email));
+  const querySnapshot = await getDocs(q);
+
+  if (querySnapshot.empty) {
+    resultDiv.innerHTML = "No record found.";
+    return;
+  }
+
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+
+    resultDiv.innerHTML = `
+      Name: ${data.Name || "N/A"} <br>
+      Email: ${data.Email || "N/A"} <br>
+      Status: ${data.Status || "N/A"} <br>
+      Agency: ${data.Agency || "N/A"} <br>
+      Posting: ${data.Posting || "N/A"}
+    `;
+  });
+};
+</script>
+
+</body>
+</html>
