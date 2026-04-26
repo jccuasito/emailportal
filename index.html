@@ -1,40 +1,274 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Email Checker</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Email Status Portal</title>
+  <link rel="icon" type="image/png" href="icons8-email-48.png">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: Arial;
-      text-align: center;
-      margin-top: 100px;
-      background: #f5f5f5;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0b1d3a;
+      --accent: #3b82f6;
+      --accent-glow: rgba(59,130,246,0.35);
+      --accent2: #06b6d4;
+      --glass: rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.09);
+      --text: #e2eaf6;
+      --muted: #6b88ad;
+      --verified: #10b981;
+      --verified-bg: rgba(16,185,129,0.12);
+      --bounce: #f59e0b;
+      --bounce-bg: rgba(245,158,11,0.12);
     }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-      margin: 5px;
+    html, body {
+      min-height: 100vh;
+      background: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
     }
-    #result {
-      margin-top: 20px;
-      font-size: 18px;
-      line-height: 1.6;
+    body::before, body::after { display: none; }
+    .wrapper {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 460px;
+      padding: 20px 16px 32px;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 20px;
     }
+    .header { text-align: center; animation: slideDown 0.6s cubic-bezier(0.16,1,0.3,1) both; }
+    .logo-3d {
+      margin-bottom: 14px;
+      filter: drop-shadow(0 8px 24px rgba(59,130,246,0.45));
+      animation: floatLogo 3s ease-in-out infinite;
+    }
+    @keyframes floatLogo {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .logo-wrap { position: relative; display: inline-block; margin-bottom: 16px; }
+    .logo-mark {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 54px; height: 54px; border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 32px var(--accent-glow);
+    }
+    .logo-mark svg { width: 26px; height: 26px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .pulse-dot {
+      position: absolute; top: -3px; right: -3px;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--verified); box-shadow: 0 0 8px var(--verified);
+      animation: pulse 2s infinite;
+    }
+    .company-tag {
+      font-family: 'Sora', sans-serif; font-size: 0.63rem; font-weight: 600;
+      letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent);
+      margin-bottom: 8px;
+    }
+    h1 {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(1.35rem, 5.5vw, 1.85rem);
+      font-weight: 600; color: #fff;
+      line-height: 1.2; letter-spacing: -0.02em;
+    }
+    h1 span {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .subtitle { margin-top: 8px; font-size: 0.8rem; color: var(--muted); font-weight: 300; }
+    .search-card {
+      width: 100%;
+      background: var(--glass); border: 1px solid var(--glass-border);
+      border-radius: 18px; padding: 20px;
+      backdrop-filter: blur(12px);
+      animation: fadeUp 0.6s 0.1s cubic-bezier(0.16,1,0.3,1) both;
+      box-shadow: 0 4px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .input-label {
+      font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+    }
+    .input-row { display: flex; gap: 10px; }
+    .email-input {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      border-radius: 10px; padding: 13px 16px;
+      font-size: 0.9rem; font-family: 'DM Sans', sans-serif; color: #fff;
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .email-input::placeholder { color: rgba(255,255,255,0.22); }
+    .email-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+    .check-btn {
+      background: linear-gradient(135deg, var(--accent) 0%, #2563eb 100%);
+      color: #fff; border: none; border-radius: 10px;
+      padding: 13px 22px; font-size: 0.88rem;
+      font-family: 'Sora', sans-serif; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(59,130,246,0.4);
+      white-space: nowrap; letter-spacing: 0.02em;
+    }
+    .check-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(59,130,246,0.55); }
+    .check-btn:active { transform: translateY(0); }
+    .result-card, .msg-card {
+      width: 100%;
+      background: var(--glass); border: 1px solid var(--glass-border);
+      border-radius: 18px; backdrop-filter: blur(12px);
+      box-shadow: 0 4px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+      display: none; animation: fadeUp 0.35s cubic-bezier(0.16,1,0.3,1) both;
+      overflow: hidden;
+    }
+    .result-card.visible, .msg-card.visible { display: block; }
+    .result-card::before {
+      content: ''; display: block; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+    .result-inner { padding: 22px 24px; }
+    .result-title {
+      font-family: 'Sora', sans-serif; font-size: 0.63rem; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px;
+    }
+    .info-row {
+      display: flex; align-items: center;
+      padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-label {
+      font-size: 0.72rem; font-weight: 500; color: var(--muted);
+      min-width: 72px; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .info-value { font-size: 0.88rem; color: var(--text); }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      border-radius: 20px; padding: 4px 14px;
+      font-size: 0.72rem; font-family: 'Sora', sans-serif;
+      font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+    .badge-verified { background: var(--verified-bg); color: var(--verified); border: 1px solid rgba(16,185,129,0.3); }
+    .badge-verified::before { background: var(--verified); box-shadow: 0 0 6px var(--verified); }
+    .badge-bounce { background: var(--bounce-bg); color: var(--bounce); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-bounce::before { background: var(--bounce); box-shadow: 0 0 6px var(--bounce); }
+    .msg-inner { padding: 36px 28px; text-align: center; }
+    .msg-icon {
+      width: 52px; height: 52px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px; font-size: 1.5rem;
+    }
+    .msg-icon.warn { background: rgba(245,158,11,0.12); }
+    .msg-icon.error { background: rgba(239,68,68,0.1); }
+    .msg-icon.info { background: rgba(59,130,246,0.12); }
+    .msg-big {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(0.95rem, 4vw, 1.15rem);
+      font-weight: 700; color: #fff;
+      letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .msg-sub { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+    .msg-sub em { color: var(--accent); font-style: italic; }
+    .footer-note {
+      font-size: 0.72rem; color: var(--muted);
+      text-align: center; line-height: 1.6; padding: 0 8px;
+      display: none; animation: fadeUp 0.4s 0.1s both;
+    }
+    .footer-note a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(59,130,246,0.4); }
+    @keyframes slideDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes pulse { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.3); opacity:0.7; } }
   </style>
 </head>
 <body>
+<div class="wrapper">
+  <div class="header">
+    <div class="logo-3d">
+      <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Shadow -->
+        <ellipse cx="36" cy="66" rx="22" ry="4" fill="rgba(0,0,0,0.25)"/>
+        <!-- Body top face -->
+        <path d="M10 28L36 14L62 28L36 42Z" fill="#4a9eff"/>
+        <!-- Body left face -->
+        <path d="M10 28L10 50L36 64L36 42Z" fill="#1a5fb4"/>
+        <!-- Body right face -->
+        <path d="M62 28L62 50L36 64L36 42Z" fill="#2b7de0"/>
+        <!-- Top highlight -->
+        <path d="M10 28L36 14L62 28L36 42Z" fill="url(#topFace)"/>
+        <!-- Envelope flap -->
+        <path d="M10 28L36 42L62 28L36 20Z" fill="#74b8ff" opacity="0.6"/>
+        <!-- Shine on top -->
+        <path d="M20 22L36 14L48 20L36 28Z" fill="white" opacity="0.15"/>
+        <!-- Letter lines on left face -->
+        <line x1="16" y1="38" x2="30" y2="46" stroke="white" stroke-width="1.5" stroke-opacity="0.3" stroke-linecap="round"/>
+        <line x1="16" y1="43" x2="28" y2="50" stroke="white" stroke-width="1.5" stroke-opacity="0.2" stroke-linecap="round"/>
+        <defs>
+          <linearGradient id="topFace" x1="10" y1="14" x2="62" y2="42" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#74b8ff"/>
+            <stop offset="100%" stop-color="#3b82f6"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+    <div class="company-tag">Employee Portal</div>
+    <h1>Check your <span>Email Status</span></h1>
+    <p class="subtitle">Verify your registered email address in the system</p>
+  </div>
 
-<h2>Check your Email Status</h2>
+  <div class="search-card">
+    <div class="input-label">Your email address</div>
+    <div class="input-row">
+      <input class="email-input" type="text" id="emailInput" placeholder="e.g. johndoe@gmail.com" />
+      <button class="check-btn" onclick="checkEmail()">Check</button>
+    </div>
+  </div>
 
-<input type="email" id="emailInput" placeholder="Enter your email">
-<button onclick="checkEmail()">Check</button>
+  <div class="result-card" id="resultCard">
+    <div class="result-inner">
+      <div class="result-title">Employee Record Found</div>
+      <div class="info-row"><span class="info-label">Name</span><span class="info-value" id="resName"></span></div>
+      <div class="info-row"><span class="info-label">Email</span><span class="info-value" id="resEmail"></span></div>
+      <div class="info-row"><span class="info-label">Status</span><span class="info-value" id="resStatus"></span></div>
+      <div class="info-row"><span class="info-label">Agency</span><span class="info-value" id="resAgency"></span></div>
+      <div class="info-row"><span class="info-label">Posting</span><span class="info-value" id="resPosting"></span></div>
+    </div>
+  </div>
 
-<div id="result"></div>
+  <div class="msg-card" id="notFoundCard">
+    <div class="msg-inner">
+      <div class="msg-icon warn">⚠️</div>
+      <div class="msg-big">No Email Found</div>
+      <div class="msg-sub">Please contact your inspector or team leader to update your email address in the system.</div>
+    </div>
+  </div>
+
+  <div class="msg-card" id="invalidCard">
+    <div class="msg-inner">
+      <div class="msg-icon error">✉️</div>
+      <div class="msg-big">Invalid Email Format</div>
+      <div class="msg-sub">Please enter a valid email address <em>(e.g. johndoe@gmail.com)</em>.</div>
+    </div>
+  </div>
+
+  <div class="msg-card" id="lowercaseCard">
+    <div class="msg-inner">
+      <div class="msg-icon info">🔡</div>
+      <div class="msg-big">Use Lowercase Only</div>
+      <div class="msg-sub">Please enter your email in lowercase letters.<br><em>e.g., johndoe@gmail.com</em></div>
+    </div>
+  </div>
+
+  <div class="footer-note" id="footerNote">
+    <em>Note:</em> If your email is incorrect or shows a <a href="#">Bounce Email</a> status, please contact your inspector to have it updated so you can receive your payslips.
+  </div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// 🔥 Firebase config mo
 const firebaseConfig = {
   apiKey: "AIzaSyCY1OJRqCXpaqlM8Pj9fK_itg8jhC311I4",
   authDomain: "email-checker-24db4.firebaseapp.com",
@@ -43,41 +277,63 @@ const firebaseConfig = {
   messagingSenderId: "484926942088",
   appId: "1:484926942088:web:540ca7e3b19868f6e8e83d"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-window.checkEmail = async function() {
-  const email = document.getElementById("emailInput").value.trim().toLowerCase();
-  const resultDiv = document.getElementById("result");
+function hideAll() {
+  ["resultCard","notFoundCard","invalidCard","lowercaseCard"].forEach(id =>
+    document.getElementById(id).classList.remove("visible")
+  );
+  document.getElementById("footerNote").style.display = "none";
+}
 
-  // validation
-  if (!email.includes("@")) {
-    resultDiv.innerHTML = "Invalid email format.";
+window.checkEmail = async function () {
+  const raw = document.getElementById("emailInput").value.trim();
+  hideAll();
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(raw)) {
+    document.getElementById("invalidCard").classList.add("visible");
+    return;
+  }
+  if (raw !== raw.toLowerCase()) {
+    document.getElementById("lowercaseCard").classList.add("visible");
     return;
   }
 
+  const email = raw.toLowerCase();
   const q = query(collection(db, "employees"), where("Email", "==", email));
-  const querySnapshot = await getDocs(q);
+  const snap = await getDocs(q);
 
-  if (querySnapshot.empty) {
-    resultDiv.innerHTML = "No record found.";
+  if (snap.empty) {
+    document.getElementById("notFoundCard").classList.add("visible");
     return;
   }
 
-  querySnapshot.forEach((doc) => {
-    const data = doc.data();
-
-    resultDiv.innerHTML = `
-      Name: ${data.Name || "N/A"} <br>
-      Email: ${data.Email || "N/A"} <br>
-      Status: ${data.Status || "N/A"} <br>
-      Agency: ${data.Agency || "N/A"} <br>
-      Posting: ${data.Posting || "N/A"}
-    `;
+  snap.forEach((doc) => {
+    const d = doc.data();
+    const status = (d.Status || "").trim().toUpperCase();
+    document.getElementById("resName").textContent = d.Name || "N/A";
+    document.getElementById("resEmail").textContent = d.Email || "N/A";
+    document.getElementById("resAgency").textContent = d.Agency || "N/A";
+    document.getElementById("resPosting").textContent = d.Posting || "N/A";
+    let badgeHtml = "";
+    if (status === "VERIFIED") {
+      badgeHtml = `<span class="badge badge-verified">Verified</span>`;
+    } else if (status === "BOUNCE EMAIL" || status === "BOUNCE") {
+      badgeHtml = `<span class="badge badge-bounce">Bounce Email</span>`;
+    } else {
+      badgeHtml = `<span class="info-value">${d.Status || "N/A"}</span>`;
+    }
+    document.getElementById("resStatus").innerHTML = badgeHtml;
+    document.getElementById("resultCard").classList.add("visible");
+    document.getElementById("footerNote").style.display = "block";
   });
 };
-</script>
 
+document.getElementById("emailInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") window.checkEmail();
+});
+</script>
 </body>
 </html>
