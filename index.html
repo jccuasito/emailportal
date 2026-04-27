@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Email Status Portal</title>
-  <link rel="icon" type="image/png" href="icons8-email-48.png">
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -180,6 +179,93 @@
     @keyframes slideDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
     @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
     @keyframes pulse { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.3); opacity:0.7; } }
+
+    /* ── Help Button ── */
+    .help-btn {
+      position: fixed; bottom: 24px; right: 24px;
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(59,130,246,0.15);
+      border: 1.5px solid rgba(59,130,246,0.4);
+      color: var(--accent);
+      font-family: 'Sora', sans-serif;
+      font-size: 1.05rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; backdrop-filter: blur(8px); z-index: 100;
+      box-shadow: 0 4px 16px rgba(59,130,246,0.2);
+    }
+    .help-btn:hover {
+      background: rgba(59,130,246,0.3);
+      box-shadow: 0 0 20px rgba(59,130,246,0.45);
+      transform: scale(1.1);
+    }
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
+      z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      width: 100%; max-width: 400px;
+      background: #0d2148;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px; overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+      transform: translateY(24px) scale(0.96);
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+    .modal-header {
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      padding: 18px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0;
+    }
+    .modal-title { font-family: 'Sora', sans-serif; font-size: 0.95rem; font-weight: 700; color: #fff; }
+    .modal-title-sub { font-size: 0.7rem; color: rgba(255,255,255,0.75); margin-top: 2px; }
+    .modal-close {
+      background: rgba(255,255,255,0.2); border: none;
+      border-radius: 50%; width: 30px; height: 30px;
+      color: #fff; font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s; flex-shrink: 0;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.35); }
+    .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      min-width: 26px; height: 26px; border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      color: #fff; font-family: 'Sora', sans-serif;
+      font-size: 0.72rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+      box-shadow: 0 2px 8px rgba(59,130,246,0.4);
+    }
+    .step-text strong {
+      display: block; font-size: 0.8rem; font-weight: 600;
+      color: #e2eaf6; margin-bottom: 3px;
+      font-family: 'Sora', sans-serif;
+    }
+    .step-text p { font-size: 0.75rem; color: #6b88ad; line-height: 1.55; margin: 0; }
+    .bi {
+      display: inline-block; border-radius: 8px;
+      padding: 1px 7px; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase; vertical-align: middle;
+    }
+    .bi-v { background: rgba(16,185,129,0.15); color: #10b981; }
+    .bi-b { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .bi-n { background: rgba(239,68,68,0.12); color: #f87171; }
   </style>
 </head>
 <body>
@@ -335,5 +421,70 @@ document.getElementById("emailInput").addEventListener("keydown", e => {
   if (e.key === "Enter") window.checkEmail();
 });
 </script>
+
+<!-- Help Button -->
+<button class="help-btn" onclick="document.getElementById('helpModal').classList.add('open')" title="How to use">?</button>
+
+<!-- Help Modal -->
+<div class="modal-overlay" id="helpModal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Paano Gamitin / How to Use</div>
+        <div class="modal-title-sub">Email Status Checker — Employee Guide</div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('helpModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong>I-type ang iyong personal na email / Type your personal email</strong>
+          <p>Ilagay ang iyong email address sa kahon, hal. <em style="color:#3b82f6">johndoe@gmail.com</em><br>
+          Enter your email address in the input box, e.g. <em style="color:#3b82f6">johndoe@gmail.com</em></p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>Suriin ang status / Check the status</strong>
+          <p>Kapag lumabas ang <span class="bi bi-v">Verified</span> — okay na! Ibig sabihin, tugma ang email mo sa system at makakatanggap ka ng payslip.<br>
+          If it shows <span class="bi bi-v">Verified</span> — you're good! Your email matches the system and you'll receive payslips.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>Kapag Bounce Email / If Bounce Email</strong>
+          <p>Kapag <span class="bi bi-b">Bounce Email</span> ang lumabas, kausapin ang iyong inspector. Ibigay ang tamang email address para ma-update sa system at makatanggap ng payslip.<br>
+          If status shows <span class="bi bi-b">Bounce Email</span>, contact your inspector. Give them your correct email so they can update it and send your payslip.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <strong>Kapag No Email Found / If No Email Found</strong>
+          <p>Ibig sabihin, wala pang email na nai-submit sa iyong inspector. Makipag-ugnayan sa kanya agad.<br>
+          This means no email has been submitted to your inspector yet. Contact them as soon as possible.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">
+          <strong>Gumamit ng maliliit na letra / Use lowercase letters</strong>
+          <p>Standard ng email ang lowercase. Siguraduhing walang malalaking letra, hal. <em style="color:#3b82f6">johndoe@gmail.com</em> hindi <em style="color:#f87171">JohnDoe@Gmail.com</em><br>
+          Emails are case-sensitive in our system. Always use lowercase letters only.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

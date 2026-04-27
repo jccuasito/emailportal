@@ -1,37 +1,137 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Admin Add Employee</title>
-  <style>
-    body {
-      font-family: Arial;
-      text-align: center;
-      margin-top: 50px;
-    }
-    input, button {
-      padding: 10px;
-      margin: 5px;
-      width: 250px;
-    }
-  </style>
-</head>
-<body>
 
-<h2>Add Employee Data</h2>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #0d1b3e; min-height: 100%; }
+.page { background: #0d1b3e; min-height: 100vh; padding: 20px 16px 100px; font-family: Arial, sans-serif; color: #c8d8f0; }
+h1 { text-align: center; color: #a0b8e0; font-size: 20px; font-weight: 500; letter-spacing: 4px; margin-bottom: 18px; }
+.toolbar { display: flex; gap: 8px; margin-bottom: 12px; }
+.search-wrap { flex: 1; }
+.search-wrap input { width: 100%; background: #162040; border: 1px solid #2a3f6e; border-radius: 10px; padding: 10px 14px; color: #c8d8f0; font-size: 15px; outline: none; }
+.search-wrap input::placeholder { color: #4a6080; }
+.btn-search { padding: 10px 18px; border-radius: 10px; border: none; cursor: pointer; font-size: 14px; font-weight: 500; background: #2a5bbf; color: #fff; white-space: nowrap; }
+.filter-bar { display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.filter-bar::-webkit-scrollbar { display: none; }
+.filter-chip { padding: 6px 14px; border-radius: 20px; font-size: 13px; background: #162040; color: #6080a0; border: 1px solid #2a3f6e; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+.filter-chip.active { background: #1e3a7a; color: #90b8f8; border-color: #3060c0; }
+.table-card { background: #101e3f; border: 1px solid #1e3060; border-radius: 12px; overflow: hidden; }
+.emp-list { display: flex; flex-direction: column; }
+.emp-card { padding: 14px 16px; border-bottom: 1px solid #141e38; display: flex; flex-direction: column; gap: 6px; }
+.emp-card:last-child { border-bottom: none; }
+.emp-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.emp-name { font-size: 15px; font-weight: 500; color: #d0e4ff; flex: 1; }
+.emp-meta { font-size: 12px; color: #7090b0; }
+.emp-email { font-size: 12px; color: #8ab0d8; word-break: break-all; }
+.emp-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.4px; }
+.badge-bounce { background: #5a5a10; color: #d4d440; }
+.badge-verified { background: #0d4020; color: #40c870; }
+.badge-invalid { background: #401010; color: #e05050; }
+.badge-pending { background: #1a2e60; color: #6090e0; }
+.emp-actions { display: flex; gap: 6px; }
+.action-btn { background: none; border: none; cursor: pointer; padding: 6px 8px; border-radius: 8px; display: flex; align-items: center; }
+.action-btn:active { background: #1e3060; }
+.action-btn svg { width: 18px; height: 18px; }
+.empty { color: #3a5070; text-align: center; padding: 50px 20px; font-size: 14px; }
+.fab { position: fixed; bottom: 28px; right: 24px; width: 58px; height: 58px; border-radius: 50%; background: #2a5bbf; color: #fff; font-size: 30px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 18px rgba(20,60,180,0.45); z-index: 50; line-height: 1; transition: background 0.15s, transform 0.1s; }
+.fab:active { background: #3468d4; transform: scale(0.94); }
+.overlay { position: fixed; inset: 0; background: rgba(0,0,20,0.8); display: flex; align-items: flex-end; justify-content: center; z-index: 100; }
+.overlay.hidden { display: none; }
+.modal { background: #10203a; border: 1px solid #1e3060; border-radius: 18px 18px 0 0; padding: 24px 20px 32px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+@media (min-width: 600px) {
+  .overlay { align-items: center; }
+  .modal { border-radius: 14px; max-height: 80vh; }
+}
+.modal-handle { width: 40px; height: 4px; background: #2a3f6e; border-radius: 4px; margin: 0 auto 18px; }
+.modal h2 { font-size: 16px; font-weight: 500; color: #90b8f8; margin-bottom: 18px; }
+.modal label { font-size: 12px; color: #7a9abf; display: block; margin-bottom: 4px; }
+.modal input { width: 100%; background: #162040; border: 1px solid #2a3f6e; border-radius: 10px; padding: 11px 13px; color: #c8d8f0; font-size: 15px; outline: none; margin-bottom: 13px; }
+.modal select { width: 100%; background: #162040; border: 1px solid #2a3f6e; border-radius: 10px; padding: 11px 13px; color: #c8d8f0; font-size: 15px; outline: none; margin-bottom: 13px; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236080a0' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+.modal select option { background: #162040; }
+.modal-actions { display: flex; gap: 10px; margin-top: 4px; }
+.btn { padding: 12px 20px; border-radius: 10px; border: none; cursor: pointer; font-size: 15px; font-weight: 500; flex: 1; }
+.btn-cancel { background: #1a2e50; color: #7090b8; border: 1px solid #2a3f6e; }
+.btn-save { background: #1a5ae8; color: #fff; }
+.btn-del-confirm { background: #b02030; color: #fff; }
+.toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #1a4040; color: #40d0a0; border: 1px solid #208060; border-radius: 10px; padding: 11px 24px; font-size: 13px; z-index: 200; opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap; }
+.toast.show { opacity: 1; }
+</style>
 
-<input id="name" placeholder="Name"><br>
-<input id="email" placeholder="Email"><br>
-<input id="status" placeholder="Status"><br>
-<input id="agency" placeholder="Agency"><br>
-<input id="posting" placeholder="Posting"><br>
+<div class="page">
+  <h1>EMAIL STATUS</h1>
+  <div class="toolbar">
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="Search name, email, posting..." oninput="renderList()">
+    </div>
+    <button class="btn-search" onclick="renderList()">Search</button>
+  </div>
+  <div class="filter-bar">
+    <div class="filter-chip active" data-agency="ALL" onclick="setAgency(this)">All</div>
+    <div class="filter-chip" data-agency="GSSI" onclick="setAgency(this)">GSSI</div>
+    <div class="filter-chip" data-agency="PSSI" onclick="setAgency(this)">PSSI</div>
+    <div class="filter-chip" data-agency="DJA" onclick="setAgency(this)">DJA</div>
+    <div class="filter-chip" data-agency="M&S" onclick="setAgency(this)">M&S</div>
+  </div>
+  <div class="table-card">
+    <div class="emp-list" id="empList"></div>
+    <div id="emptyMsg" class="empty" style="display:none;">No records found.</div>
+  </div>
+</div>
 
-<button onclick="addData()">Add</button>
+<button class="fab" onclick="openAdd()" title="Add employee">+</button>
 
-<p id="result"></p>
+<!-- Add/Edit Modal -->
+<div class="overlay hidden" id="formModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2 id="modalTitle">Add Employee</h2>
+    <label>Name</label>
+    <input id="fName" placeholder="Full name" autocomplete="off">
+    <label>Email</label>
+    <input id="fEmail" type="email" placeholder="email@example.com" autocomplete="off">
+    <label>Status</label>
+    <select id="fStatus">
+      <option value="">— Select status —</option>
+      <option value="VERIFIED">VERIFIED</option>
+      <option value="BOUNCE EMAIL">BOUNCE EMAIL</option>
+      <option value="INVALID">INVALID</option>
+      <option value="PENDING">PENDING</option>
+    </select>
+    <label>Agency</label>
+    <select id="fAgency">
+      <option value="">— Select agency —</option>
+      <option value="GSSI">GSSI</option>
+      <option value="PSSI">PSSI</option>
+      <option value="DJA">DJA</option>
+      <option value="M&S">M&amp;S</option>
+    </select>
+    <label>Posting</label>
+    <input id="fPosting" placeholder="e.g. SM SAN LAZARO - SPORTS CENTRAL" autocomplete="off">
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeModal('formModal')">Cancel</button>
+      <button class="btn btn-save" onclick="saveEmployee()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="overlay hidden" id="delModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2>Delete employee?</h2>
+    <p style="font-size:13px;color:#7a9abf;margin-bottom:14px;">This cannot be undone.</p>
+    <div id="delInfo" style="font-size:14px;color:#b0c8e8;margin-bottom:20px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeModal('delModal')">Cancel</button>
+      <button class="btn btn-del-confirm" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, setDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCY1OJRqCXpaqlM8Pj9fK_itg8jhC311I4",
@@ -42,29 +142,154 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-window.addData = async function() {
-  const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value.toLowerCase();
-  const status = document.getElementById("status").value;
-  const agency = document.getElementById("agency").value;
-  const posting = document.getElementById("posting").value;
+let employees = [];
+let editingId = null;
+let deletingId = null;
+let activeAgency = "ALL";
 
-  try {
-    await addDoc(collection(db, "employees"), {
-      Name: name,
-      Email: email,
-      Status: status,
-      Agency: agency,
-      Posting: posting
-    });
+function generateEmpId() {
+  const num = Date.now() % 10000000000;
+  return "emp_" + num;
+}
 
-    document.getElementById("result").innerText = "Added successfully!";
-  } catch (e) {
-    document.getElementById("result").innerText = "Error adding data";
-    console.error(e);
+window.setAgency = function(el) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  activeAgency = el.dataset.agency;
+  renderList();
+}
+
+async function loadEmployees() {
+  const snap = await getDocs(collection(db, "employees"));
+  employees = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  renderList();
+}
+
+window.renderList = function() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const list = document.getElementById('empList');
+  const emptyMsg = document.getElementById('emptyMsg');
+
+  let filtered = employees.filter(e => {
+    const agencyMatch = activeAgency === 'ALL' || (e.Agency || '') === activeAgency;
+    const searchMatch = !q || [e.Name, e.Email, e.Agency, e.Posting, e.Status].some(v => (v||'').toLowerCase().includes(q));
+    return agencyMatch && searchMatch;
+  });
+
+  if (!filtered.length) {
+    list.innerHTML = '';
+    emptyMsg.style.display = '';
+    return;
   }
-};
-</script>
+  emptyMsg.style.display = 'none';
 
-</body>
-</html>
+  const badgeClass = s => ({ 'BOUNCE EMAIL':'badge-bounce','VERIFIED':'badge-verified','INVALID':'badge-invalid','PENDING':'badge-pending' }[s] || 'badge-pending');
+
+  list.innerHTML = filtered.map(e => `
+    <div class="emp-card">
+      <div class="emp-card-top">
+        <div>
+          <div class="emp-name">${e.Name||''}</div>
+          <div class="emp-email">${e.Email||''}</div>
+        </div>
+        <div class="emp-actions">
+          <button class="action-btn" onclick="openEdit('${e.id}')" title="Edit">
+            <svg viewBox="0 0 20 20" fill="none" stroke="#5090e0" stroke-width="1.8"><path d="M14.7 3.3a1.4 1.4 0 012 2L6.5 15.5l-3 .5.5-3L14.7 3.3z"/></svg>
+          </button>
+          <button class="action-btn" onclick="openDelete('${e.id}')" title="Delete">
+            <svg viewBox="0 0 20 20" fill="none" stroke="#e05060" stroke-width="1.8"><path d="M5 7h10M8 7V5h4v2M9 10v5M11 10v5M6 7l1 9h6l1-9"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="emp-row">
+        <span class="badge ${badgeClass(e.Status)}">${e.Status||''}</span>
+        <span class="emp-meta">${e.Agency||''}</span>
+        ${e.Posting ? `<span class="emp-meta">· ${e.Posting}</span>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+window.openAdd = function() {
+  editingId = null;
+  document.getElementById('modalTitle').textContent = 'Add Employee';
+  ['fName','fEmail','fPosting'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('fStatus').value = '';
+  document.getElementById('fAgency').value = '';
+  document.getElementById('formModal').classList.remove('hidden');
+}
+
+window.openEdit = function(id) {
+  const e = employees.find(x => x.id === id);
+  if (!e) return;
+  editingId = id;
+  document.getElementById('modalTitle').textContent = 'Edit Employee';
+  document.getElementById('fName').value = e.Name || '';
+  document.getElementById('fEmail').value = e.Email || '';
+  document.getElementById('fStatus').value = e.Status || '';
+  document.getElementById('fAgency').value = e.Agency || '';
+  document.getElementById('fPosting').value = e.Posting || '';
+  document.getElementById('formModal').classList.remove('hidden');
+}
+
+window.saveEmployee = async function() {
+  const data = {
+    Name: document.getElementById('fName').value.trim(),
+    Email: document.getElementById('fEmail').value.trim().toLowerCase(),
+    Status: document.getElementById('fStatus').value,
+    Agency: document.getElementById('fAgency').value,
+    Posting: document.getElementById('fPosting').value.trim(),
+    updatedAt: new Date().toISOString()
+  };
+  if (!data.Name || !data.Email) { showToast('Name and Email are required.', true); return; }
+  try {
+    if (editingId) {
+      await updateDoc(doc(db, "employees", editingId), data);
+      const idx = employees.findIndex(x => x.id === editingId);
+      employees[idx] = { id: editingId, ...data };
+      showToast('Employee updated.');
+    } else {
+      const newId = generateEmpId();
+      await setDoc(doc(db, "employees", newId), data);
+      employees.push({ id: newId, ...data });
+      showToast('Employee added.');
+    }
+    closeModal('formModal');
+    renderList();
+  } catch(e) { showToast('Error saving. Try again.', true); console.error(e); }
+}
+
+window.openDelete = function(id) {
+  const e = employees.find(x => x.id === id);
+  if (!e) return;
+  deletingId = id;
+  document.getElementById('delInfo').textContent = `${e.Name} — ${e.Email}`;
+  document.getElementById('delModal').classList.remove('hidden');
+}
+
+window.confirmDelete = async function() {
+  try {
+    await deleteDoc(doc(db, "employees", deletingId));
+    employees = employees.filter(x => x.id !== deletingId);
+    closeModal('delModal');
+    renderList();
+    showToast('Employee deleted.');
+  } catch(e) { showToast('Error deleting. Try again.', true); }
+}
+
+window.closeModal = function(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = isError ? '#401020' : '#1a4040';
+  t.style.color = isError ? '#e06080' : '#40d0a0';
+  t.style.borderColor = isError ? '#802040' : '#208060';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+loadEmployees();
+</script>

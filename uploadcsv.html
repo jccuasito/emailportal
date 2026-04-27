@@ -24,9 +24,18 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// simple fallback ID generator
 function generateId(row) {
-  return "noemail_" + Math.random().toString(36).substring(2, 10);
+  const base = `${row.Name}_${row.Agency}_${row.Posting}`
+    .toLowerCase()
+    .replace(/\s+/g, "_");
+
+  let hash = 0;
+  for (let i = 0; i < base.length; i++) {
+    hash = (hash << 5) - hash + base.charCodeAt(i);
+    hash |= 0;
+  }
+
+  return "emp_" + Math.abs(hash);
 }
 
 window.upload = function () {
@@ -50,8 +59,8 @@ window.upload = function () {
 
         const email = row.Email?.trim().toLowerCase();
 
-        // 🔥 KEY LOGIC: email OR fallback ID
-        const docId = email ? email : generateId(row);
+        // 👉 ALWAYS use generated ID
+        const docId = generateId(row);
 
         try {
           await setDoc(doc(db, "employees", docId), {
