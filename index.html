@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Email Status Portal</title>
+  <title>Payslip Status Portal</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,7 +32,6 @@
       justify-content: center;
       overflow-x: hidden;
     }
-    body::before, body::after { display: none; }
     .wrapper {
       position: relative; z-index: 1;
       width: 100%; max-width: 460px;
@@ -50,20 +49,6 @@
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-6px); }
     }
-    .logo-wrap { position: relative; display: inline-block; margin-bottom: 16px; }
-    .logo-mark {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 54px; height: 54px; border-radius: 16px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      box-shadow: 0 0 32px var(--accent-glow);
-    }
-    .logo-mark svg { width: 26px; height: 26px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    .pulse-dot {
-      position: absolute; top: -3px; right: -3px;
-      width: 10px; height: 10px; border-radius: 50%;
-      background: var(--verified); box-shadow: 0 0 8px var(--verified);
-      animation: pulse 2s infinite;
-    }
     .company-tag {
       font-family: 'Sora', sans-serif; font-size: 0.63rem; font-weight: 600;
       letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent);
@@ -80,6 +65,8 @@
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
     .subtitle { margin-top: 8px; font-size: 0.8rem; color: var(--muted); font-weight: 300; }
+
+    /* ── Search Card ── */
     .search-card {
       width: 100%;
       background: var(--glass); border: 1px solid var(--glass-border);
@@ -114,6 +101,8 @@
     }
     .check-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(59,130,246,0.55); }
     .check-btn:active { transform: translateY(0); }
+
+    /* ── Result + Msg Cards ── */
     .result-card, .msg-card {
       width: 100%;
       background: var(--glass); border: 1px solid var(--glass-border);
@@ -153,6 +142,23 @@
     .badge-verified::before { background: var(--verified); box-shadow: 0 0 6px var(--verified); }
     .badge-bounce { background: var(--bounce-bg); color: var(--bounce); border: 1px solid rgba(245,158,11,0.3); }
     .badge-bounce::before { background: var(--bounce); box-shadow: 0 0 6px var(--bounce); }
+
+    /* ── View Payslip Button ── */
+    .view-payslip-btn {
+      width: 100%; margin-top: 18px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      color: #fff; border: none; border-radius: 10px;
+      padding: 13px 20px; font-size: 0.88rem;
+      font-family: 'Sora', sans-serif; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 4px 20px rgba(59,130,246,0.4);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      letter-spacing: 0.03em;
+    }
+    .view-payslip-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(59,130,246,0.55); }
+    .view-payslip-btn svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ── Msg Cards ── */
     .msg-inner { padding: 36px 28px; text-align: center; }
     .msg-icon {
       width: 52px; height: 52px; border-radius: 50%;
@@ -170,15 +176,329 @@
     }
     .msg-sub { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
     .msg-sub em { color: var(--accent); font-style: italic; }
+
     .footer-note {
       font-size: 0.72rem; color: var(--muted);
       text-align: center; line-height: 1.6; padding: 0 8px;
       display: none; animation: fadeUp 0.4s 0.1s both;
     }
     .footer-note a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(59,130,246,0.4); }
-    @keyframes slideDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
-    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-    @keyframes pulse { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.3); opacity:0.7; } }
+
+    /* ══════════════════════════════════════════
+       PAYSLIP SUMMARY MODAL
+    ══════════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(8px);
+      z-index: 300;
+      display: flex; align-items: flex-end; justify-content: center;
+      padding: 0;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    /* Bottom-sheet on mobile, centered card on desktop */
+    .modal {
+      width: 100%; max-width: 480px;
+      background: #0d2148;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px 20px 0 0;
+      overflow: hidden;
+      box-shadow: 0 -8px 48px rgba(0,0,0,0.5);
+      transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+      max-height: 92vh; display: flex; flex-direction: column;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+
+    /* Drag handle indicator */
+    .modal::before {
+      content: '';
+      display: block;
+      width: 36px; height: 4px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 2px;
+      margin: 10px auto 0;
+      flex-shrink: 0;
+    }
+
+    @media (min-width: 560px) {
+      .modal-overlay { align-items: center; padding: 20px; }
+      .modal {
+        border-radius: 20px;
+        transform: translateY(24px) scale(0.96);
+        box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+        max-height: 88vh;
+      }
+      .modal::before { display: none; }
+      .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      padding: 18px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .modal-header-left { display: flex; flex-direction: column; gap: 2px; }
+    .modal-header-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 8px;
+    }
+    .modal-header-icon svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .modal-title { font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700; color: #fff; }
+    .modal-title-sub { font-size: 0.7rem; color: rgba(255,255,255,0.75); }
+    .modal-employee-name { font-size: 0.78rem; color: rgba(255,255,255,0.9); font-weight: 500; margin-top: 4px; }
+
+    .modal-close {
+      background: rgba(255,255,255,0.2); border: none;
+      border-radius: 50%; width: 30px; height: 30px;
+      color: #fff; font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s; flex-shrink: 0; align-self: flex-start;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.35); }
+
+    .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+
+    /* Loading state */
+    .payslip-loading {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 40px 20px; gap: 14px;
+    }
+    .spinner {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 3px solid rgba(59,130,246,0.2);
+      border-top-color: var(--accent);
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { font-size: 0.8rem; color: var(--muted); }
+
+    /* Empty state */
+    .payslip-empty {
+      text-align: center; padding: 40px 20px;
+    }
+    .payslip-empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .payslip-empty-title {
+      font-family: 'Sora', sans-serif; font-size: 0.9rem;
+      font-weight: 700; color: #fff; margin-bottom: 6px;
+    }
+    .payslip-empty-sub { font-size: 0.78rem; color: var(--muted); line-height: 1.55; }
+
+    /* Payslip list */
+    .payslip-list { display: flex; flex-direction: column; gap: 0; }
+    .payslip-list-header {
+      display: grid; grid-template-columns: 1fr auto;
+      padding: 8px 12px 10px;
+      font-size: 0.62rem; font-weight: 600;
+      color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      margin-bottom: 4px;
+    }
+    .payslip-item {
+      display: grid; grid-template-columns: 1fr auto;
+      align-items: center; gap: 12px;
+      padding: 13px 12px;
+      border-radius: 10px;
+      transition: background 0.15s;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .payslip-item:last-child { border-bottom: none; }
+    .payslip-item:hover { background: rgba(255,255,255,0.04); }
+    .payslip-period {
+      font-size: 0.85rem; color: var(--text); font-weight: 500;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .payslip-period-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      flex-shrink: 0;
+    }
+    .view-btn {
+      background: rgba(59,130,246,0.15);
+      border: 1px solid rgba(59,130,246,0.3);
+      color: var(--accent);
+      font-family: 'Sora', sans-serif;
+      font-size: 0.7rem; font-weight: 600;
+      padding: 6px 14px; border-radius: 6px;
+      cursor: pointer; transition: all 0.2s;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .view-btn:hover {
+      background: rgba(59,130,246,0.3);
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(59,130,246,0.3);
+    }
+
+    /* ══════════════════════════════════════════
+       FULL PAYSLIP VIEWER MODAL
+    ══════════════════════════════════════════ */
+    #payslipViewModal {
+      z-index: 400;
+      align-items: flex-end;
+      padding: 0;
+    }
+    /* Full screen on mobile */
+    .payslip-view-modal {
+      max-width: 100%;
+      height: 100%;
+      max-height: 100vh;
+      border-radius: 0;
+      transform: translateY(100%);
+    }
+    .payslip-view-modal::before { display: none; }
+    #payslipViewModal.open .payslip-view-modal { transform: translateY(0); }
+
+    @media (min-width: 560px) {
+      #payslipViewModal { align-items: center; padding: 20px; }
+      .payslip-view-modal {
+        max-width: 560px;
+        height: auto;
+        max-height: 92vh;
+        border-radius: 20px;
+        transform: translateY(24px) scale(0.96);
+      }
+      #payslipViewModal.open .payslip-view-modal { transform: translateY(0) scale(1); }
+    }
+
+    .payslip-view-header {
+      background: #0b1d3a;
+      border-bottom: 1px solid rgba(59,130,246,0.25);
+      padding: 12px 14px;
+      display: flex; align-items: center; gap: 10px;
+      flex-shrink: 0; flex-wrap: nowrap;
+    }
+    /* Left: title block */
+    .payslip-view-header-left {
+      flex: 1; min-width: 0;
+    }
+    .payslip-view-title {
+      font-family: 'Sora', sans-serif; font-size: 0.82rem;
+      font-weight: 700; color: #fff;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .payslip-view-subtitle {
+      font-size: 0.65rem; color: var(--muted); margin-top: 1px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    /* Right: action buttons */
+    .payslip-view-actions {
+      display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+    }
+    .screenshot-tip {
+      font-size: 0.6rem; color: var(--accent);
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.25);
+      border-radius: 6px; padding: 4px 8px;
+      display: none; align-items: center; gap: 4px;
+      white-space: nowrap;
+    }
+    .screenshot-tip svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 2; flex-shrink: 0; }
+    @media (min-width: 400px) {
+      .screenshot-tip { display: flex; }
+    }
+    .payslip-view-body {
+      padding: 12px; overflow-y: auto; flex: 1;
+      background: #f0f2f5;
+      -webkit-overflow-scrolling: touch;
+    }
+    /* Payslip image container — pinch-zoom friendly */
+    .payslip-image-wrap {
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+    }
+    .payslip-image-wrap img {
+      width: 100%; display: block;
+      border-radius: 8px;
+      touch-action: pinch-zoom;
+    }
+    /* JSON/table payslip fallback */
+    .payslip-table-wrap {
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+      font-family: 'DM Sans', sans-serif;
+    }
+    .payslip-doc-header {
+      background: #0b1d3a; color: #fff;
+      padding: 16px 20px;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .payslip-doc-title {
+      font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700;
+    }
+    .payslip-doc-meta { font-size: 0.72rem; color: rgba(255,255,255,0.6); }
+    .payslip-doc-body { padding: 16px; }
+    .payslip-section-label {
+      font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.12em; color: #3b82f6; margin-bottom: 8px; margin-top: 14px;
+    }
+    .payslip-section-label:first-child { margin-top: 0; }
+    .payslip-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 6px 0; border-bottom: 1px solid #f0f2f5;
+      font-size: 0.82rem; color: #1e3a6e;
+    }
+    .payslip-row:last-child { border-bottom: none; }
+    .payslip-row-label { color: #4b6080; }
+    .payslip-row-value { font-weight: 600; }
+    .payslip-total-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 14px; margin-top: 12px;
+      background: #0b1d3a; border-radius: 8px;
+      font-family: 'Sora', sans-serif; font-weight: 700;
+      font-size: 0.88rem; color: #fff;
+    }
+    .payslip-net-pay { color: #10b981; }
+
+    /* Back button */
+    .back-btn {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--muted);
+      font-family: 'Sora', sans-serif; font-size: 0.7rem; font-weight: 600;
+      padding: 6px 12px; border-radius: 6px;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; gap: 5px;
+      letter-spacing: 0.04em;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .back-btn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* Download button */
+    .download-btn {
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none; color: #fff;
+      font-family: 'Sora', sans-serif; font-size: 0.7rem; font-weight: 700;
+      padding: 7px 14px; border-radius: 7px;
+      cursor: pointer; transition: all 0.2s;
+      display: none; align-items: center; gap: 5px;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      box-shadow: 0 3px 12px rgba(16,185,129,0.4);
+      white-space: nowrap;
+    }
+    .download-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(16,185,129,0.55);
+    }
+    .download-btn:active { transform: translateY(0); }
+    .download-btn svg { width: 13px; height: 13px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ══════════════════════════════════════════
+       HELP MODAL
+    ══════════════════════════════════════════ */
+    #helpModal { z-index: 200; }
+    .help-modal { max-width: 400px; }
 
     /* ── Help Button ── */
     .help-btn {
@@ -198,45 +518,8 @@
       box-shadow: 0 0 20px rgba(59,130,246,0.45);
       transform: scale(1.1);
     }
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(6px);
-      z-index: 200;
-      display: flex; align-items: center; justify-content: center;
-      padding: 20px;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.25s;
-    }
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
-    .modal {
-      width: 100%; max-width: 400px;
-      background: #0d2148;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px; overflow: hidden;
-      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
-      transform: translateY(24px) scale(0.96);
-      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
-      max-height: 90vh; overflow-y: auto;
-    }
-    .modal-overlay.open .modal { transform: translateY(0) scale(1); }
-    .modal-header {
-      background: linear-gradient(135deg, #3b82f6, #06b6d4);
-      padding: 18px 20px;
-      display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0;
-    }
-    .modal-title { font-family: 'Sora', sans-serif; font-size: 0.95rem; font-weight: 700; color: #fff; }
-    .modal-title-sub { font-size: 0.7rem; color: rgba(255,255,255,0.75); margin-top: 2px; }
-    .modal-close {
-      background: rgba(255,255,255,0.2); border: none;
-      border-radius: 50%; width: 30px; height: 30px;
-      color: #fff; font-size: 1rem; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s; flex-shrink: 0;
-    }
-    .modal-close:hover { background: rgba(255,255,255,0.35); }
-    .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 0; }
+
+    .modal-body-help { padding: 20px; display: flex; flex-direction: column; gap: 0; overflow-y: auto; }
     .step {
       display: flex; gap: 14px; align-items: flex-start;
       padding: 12px 0;
@@ -266,6 +549,11 @@
     .bi-v { background: rgba(16,185,129,0.15); color: #10b981; }
     .bi-b { background: rgba(245,158,11,0.15); color: #f59e0b; }
     .bi-n { background: rgba(239,68,68,0.12); color: #f87171; }
+
+    /* Animations */
+    @keyframes slideDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes pulse { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.3); opacity:0.7; } }
   </style>
 </head>
 <body>
@@ -273,21 +561,13 @@
   <div class="header">
     <div class="logo-3d">
       <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Shadow -->
         <ellipse cx="36" cy="66" rx="22" ry="4" fill="rgba(0,0,0,0.25)"/>
-        <!-- Body top face -->
         <path d="M10 28L36 14L62 28L36 42Z" fill="#4a9eff"/>
-        <!-- Body left face -->
         <path d="M10 28L10 50L36 64L36 42Z" fill="#1a5fb4"/>
-        <!-- Body right face -->
         <path d="M62 28L62 50L36 64L36 42Z" fill="#2b7de0"/>
-        <!-- Top highlight -->
         <path d="M10 28L36 14L62 28L36 42Z" fill="url(#topFace)"/>
-        <!-- Envelope flap -->
         <path d="M10 28L36 42L62 28L36 20Z" fill="#74b8ff" opacity="0.6"/>
-        <!-- Shine on top -->
         <path d="M20 22L36 14L48 20L36 28Z" fill="white" opacity="0.15"/>
-        <!-- Letter lines on left face -->
         <line x1="16" y1="38" x2="30" y2="46" stroke="white" stroke-width="1.5" stroke-opacity="0.3" stroke-linecap="round"/>
         <line x1="16" y1="43" x2="28" y2="50" stroke="white" stroke-width="1.5" stroke-opacity="0.2" stroke-linecap="round"/>
         <defs>
@@ -299,7 +579,7 @@
       </svg>
     </div>
     <div class="company-tag">Employee Portal</div>
-    <h1>Check your <span>Email Status</span></h1>
+    <h1>Check your <span>Payslip Status</span></h1>
     <p class="subtitle">Verify your registered email address in the system</p>
   </div>
 
@@ -319,6 +599,10 @@
       <div class="info-row"><span class="info-label">Status</span><span class="info-value" id="resStatus"></span></div>
       <div class="info-row"><span class="info-label">Agency</span><span class="info-value" id="resAgency"></span></div>
       <div class="info-row"><span class="info-label">Posting</span><span class="info-value" id="resPosting"></span></div>
+      <button class="view-payslip-btn" id="viewPayslipBtn" onclick="openPayslipSummary()">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        View My Payslips
+      </button>
     </div>
   </div>
 
@@ -351,9 +635,139 @@
   </div>
 </div>
 
+<!-- ══ PAYSLIP SUMMARY MODAL ══ -->
+<div class="modal-overlay" id="payslipSummaryModal" onclick="if(event.target===this)closePayslipSummary()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-header-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div class="modal-title">Payslip Summary</div>
+        <div class="modal-title-sub" id="summaryEmployeeName">Loading...</div>
+      </div>
+      <button class="modal-close" onclick="closePayslipSummary()">✕</button>
+    </div>
+    <div class="modal-body" id="payslipSummaryBody">
+      <div class="payslip-loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Fetching your payslips…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FULL PAYSLIP VIEWER MODAL ══ -->
+<div class="modal-overlay" id="payslipViewModal" onclick="if(event.target===this)closePayslipView()">
+  <div class="modal payslip-view-modal">
+    <div class="payslip-view-header">
+      <div class="payslip-view-header-left">
+        <div class="payslip-view-title" id="payslipViewTitle">Payslip</div>
+        <div class="payslip-view-subtitle" id="payslipViewSubtitle"></div>
+      </div>
+      <div class="payslip-view-actions">
+        <button class="download-btn" id="downloadPayslipBtn" onclick="downloadPayslip()">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </button>
+        <div class="screenshot-tip">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+          Screenshot
+        </div>
+        <button class="modal-close" onclick="closePayslipView()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);">✕</button>
+      </div>
+    </div>
+    <div class="payslip-view-body" id="payslipViewBody">
+      <!-- Content rendered here -->
+    </div>
+  </div>
+</div>
+
+<!-- ══ HELP MODAL ══ -->
+<button class="help-btn" onclick="document.getElementById('helpModal').classList.add('open')" title="How to use">?</button>
+<div class="modal-overlay" id="helpModal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal help-modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Paano Gamitin / How to Use</div>
+        <div class="modal-title-sub">Payslip Status Checker — Employee Guide</div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('helpModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body-help">
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong>I-type ang iyong personal na email / Type your personal email</strong>
+          <p>Ilagay ang iyong email address sa kahon, hal. <em style="color:#3b82f6">johndoe@gmail.com</em><br>
+          Enter your email address in the input box.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>Suriin ang status / Check the status</strong>
+          <p>Kapag lumabas ang <span class="bi bi-v">Verified</span> — okay na! Ibig sabihin, tugma ang email mo sa system.<br>
+          If it shows <span class="bi bi-v">Verified</span> — your email is registered and you can view payslips.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>I-click ang "View My Payslips" / Click "View My Payslips"</strong>
+          <p>Kapag <span class="bi bi-v">Verified</span> ang status mo, lalabas ang button na "View My Payslips". I-click ito para makita ang listahan ng iyong mga payslip.<br>
+          Once verified, click the blue button to see your payslip list.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <strong>Tingnan ang buong payslip / View full payslip</strong>
+          <p>Sa Payslip Summary, i-click ang <strong style="color:#3b82f6">View</strong> sa tabi ng date period para makita ang detalye ng iyong payslip.<br>
+          In the Payslip Summary, click <strong style="color:#3b82f6">View</strong> next to the date period to open the full payslip.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">
+          <strong>I-screenshot ang payslip / Screenshot your payslip</strong>
+          <p>Pinakamadaling paraan para mapanatili ang kopya ay ang mag-screenshot. Gamitin ang screenshot function ng iyong phone o computer.<br>
+          The easiest way to save your payslip is to take a screenshot of it.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-text">
+          <strong>Kapag Bounce Email / If Bounce Email</strong>
+          <p>Kapag <span class="bi bi-b">Bounce Email</span> ang lumabas, kausapin ang iyong inspector agad para ma-update ang email.<br>
+          If status shows <span class="bi bi-b">Bounce Email</span>, contact your inspector to update your email.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">7</div>
+        <div class="step-text">
+          <strong>Gumamit ng maliliit na letra / Use lowercase letters</strong>
+          <p>Laging gumamit ng lowercase. Hal. <em style="color:#3b82f6">johndoe@gmail.com</em> hindi <em style="color:#f87171">JohnDoe@Gmail.com</em></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getFirestore, collection, query, where, getDocs,
+  getDoc, doc, orderBy, limit, startAfter
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCY1OJRqCXpaqlM8Pj9fK_itg8jhC311I4",
@@ -366,6 +780,58 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// ════════════════════════════════════════════════
+//  CACHE HELPERS
+//  • sessionStorage  → employee lookup (per tab session, cleared on close)
+//  • localStorage    → payslip LIST metadata only (period + docId, NO image)
+//                      expires after CACHE_TTL_MS
+//  • sessionStorage  → full payslip image (per tab only, large data)
+// ════════════════════════════════════════════════
+const CACHE_TTL_MS  = 30 * 60 * 1000; // 30 minutes for list cache
+const PAGE_SIZE     = 6;               // payslips shown per page
+
+function ssGet(key) {
+  try { return JSON.parse(sessionStorage.getItem(key)); } catch { return null; }
+}
+function ssSet(key, val) {
+  try { sessionStorage.setItem(key, JSON.stringify(val)); } catch {}
+}
+function lsGet(key) {
+  try {
+    const item = JSON.parse(localStorage.getItem(key));
+    if (!item) return null;
+    if (Date.now() - item.ts > CACHE_TTL_MS) { localStorage.removeItem(key); return null; }
+    return item.val;
+  } catch { return null; }
+}
+function lsSet(key, val) {
+  try { localStorage.setItem(key, JSON.stringify({ ts: Date.now(), val })); } catch {}
+}
+
+// ── State ──
+let currentEmployeeDocId = null;
+let currentEmployeeName  = null;
+let currentPayslipSrc    = null;
+let currentPayslipPeriod = null;
+
+// Pagination state
+let allPayslipMeta = [];   // [{id, period}] full list from cache/firestore
+let shownCount     = 0;    // how many rows currently visible
+
+// ── Utilities ──
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+function escapeAttr(str) {
+  return String(str).replace(/'/g,"\\'").replace(/"/g,"&quot;");
+}
+function formatCurrency(val) {
+  const n = parseFloat(val);
+  if (isNaN(n)) return escapeHtml(String(val));
+  return n.toLocaleString("en-PH", { minimumFractionDigits:2, maximumFractionDigits:2 });
+}
 function hideAll() {
   ["resultCard","notFoundCard","invalidCard","lowercaseCard"].forEach(id =>
     document.getElementById(id).classList.remove("visible")
@@ -373,118 +839,325 @@ function hideAll() {
   document.getElementById("footerNote").style.display = "none";
 }
 
+// ════════════════════════════════════════════════
+//  1. EMAIL CHECK  — cached in sessionStorage
+//     1 Firestore read per email per tab session
+// ════════════════════════════════════════════════
 window.checkEmail = async function () {
   const raw = document.getElementById("emailInput").value.trim();
   hideAll();
+  currentEmployeeDocId = null;
+  currentEmployeeName  = null;
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(raw)) {
-    document.getElementById("invalidCard").classList.add("visible");
-    return;
+    document.getElementById("invalidCard").classList.add("visible"); return;
   }
   if (raw !== raw.toLowerCase()) {
-    document.getElementById("lowercaseCard").classList.add("visible");
-    return;
+    document.getElementById("lowercaseCard").classList.add("visible"); return;
   }
 
   const email = raw.toLowerCase();
-  const q = query(collection(db, "employees"), where("Email", "==", email));
-  const snap = await getDocs(q);
 
-  if (snap.empty) {
-    document.getElementById("notFoundCard").classList.add("visible");
+  // ── Check session cache first (zero reads if same tab)
+  const cacheKey = `emp_lookup_${email}`;
+  let empData = ssGet(cacheKey);
+
+  if (!empData) {
+    // 🔥 1 Firestore read — only runs when not cached
+    const q    = query(collection(db, "employees"), where("Email", "==", email));
+    const snap = await getDocs(q);
+    if (snap.empty) {
+      document.getElementById("notFoundCard").classList.add("visible"); return;
+    }
+    snap.forEach(d => {
+      empData = { id: d.id, ...d.data() };
+    });
+    ssSet(cacheKey, empData); // save to session
+  }
+
+  if (!empData) {
+    document.getElementById("notFoundCard").classList.add("visible"); return;
+  }
+
+  currentEmployeeDocId = empData.id;
+  currentEmployeeName  = empData.Name || "Employee";
+
+  const status = (empData.Status || "").trim().toUpperCase();
+  document.getElementById("resName").textContent    = empData.Name    || "N/A";
+  document.getElementById("resEmail").textContent   = empData.Email   || "N/A";
+  document.getElementById("resAgency").textContent  = empData.Agency  || "N/A";
+  document.getElementById("resPosting").textContent = empData.Posting || "N/A";
+
+  let badgeHtml = "";
+  if (status === "VERIFIED") {
+    badgeHtml = `<span class="badge badge-verified">Verified</span>`;
+  } else if (status === "BOUNCE EMAIL" || status === "BOUNCE") {
+    badgeHtml = `<span class="badge badge-bounce">Bounce Email</span>`;
+  } else {
+    badgeHtml = `<span class="info-value">${escapeHtml(empData.Status || "N/A")}</span>`;
+  }
+  document.getElementById("resStatus").innerHTML = badgeHtml;
+  document.getElementById("resultCard").classList.add("visible");
+  document.getElementById("footerNote").style.display = "block";
+};
+
+// ════════════════════════════════════════════════
+//  2. PAYSLIP LIST  — metadata only cached in localStorage
+//     Fields fetched: period, createdAt, docId  (NO imageBase64)
+//     Cached for 30 min so repeat opens = 0 reads
+// ════════════════════════════════════════════════
+window.openPayslipSummary = async function () {
+  if (!currentEmployeeDocId) return;
+
+  document.getElementById("summaryEmployeeName").textContent = currentEmployeeName;
+  document.getElementById("payslipSummaryBody").innerHTML = `
+    <div class="payslip-loading">
+      <div class="spinner"></div>
+      <div class="loading-text">Fetching your payslips…</div>
+    </div>`;
+  document.getElementById("payslipSummaryModal").classList.add("open");
+
+  const listCacheKey = `payslip_list_${currentEmployeeDocId}`;
+  let cachedList = lsGet(listCacheKey);
+
+  if (cachedList) {
+    // ✅ Zero reads — serve from localStorage
+    allPayslipMeta = cachedList;
+    shownCount = 0;
+    renderPayslipList();
     return;
   }
 
-  snap.forEach((doc) => {
-    const d = doc.data();
-    const status = (d.Status || "").trim().toUpperCase();
-    document.getElementById("resName").textContent = d.Name || "N/A";
-    document.getElementById("resEmail").textContent = d.Email || "N/A";
-    document.getElementById("resAgency").textContent = d.Agency || "N/A";
-    document.getElementById("resPosting").textContent = d.Posting || "N/A";
-    let badgeHtml = "";
-    if (status === "VERIFIED") {
-      badgeHtml = `<span class="badge badge-verified">Verified</span>`;
-    } else if (status === "BOUNCE EMAIL" || status === "BOUNCE") {
-      badgeHtml = `<span class="badge badge-bounce">Bounce Email</span>`;
-    } else {
-      badgeHtml = `<span class="info-value">${d.Status || "N/A"}</span>`;
+  // 🔥 Firestore reads — metadata only (period + createdAt, NOT imageBase64)
+  try {
+    const payslipsRef = collection(db, "employees", currentEmployeeDocId, "payslips");
+    let snap;
+    try {
+      const q = query(payslipsRef, orderBy("createdAt", "desc"), limit(50));
+      snap = await getDocs(q);
+    } catch {
+      snap = await getDocs(payslipsRef);
     }
-    document.getElementById("resStatus").innerHTML = badgeHtml;
-    document.getElementById("resultCard").classList.add("visible");
-    document.getElementById("footerNote").style.display = "block";
-  });
+
+    if (snap.empty) {
+      document.getElementById("payslipSummaryBody").innerHTML = `
+        <div class="payslip-empty">
+          <div class="payslip-empty-icon">📄</div>
+          <div class="payslip-empty-title">No Payslips Yet</div>
+          <div class="payslip-empty-sub">Your payslips will appear here once uploaded by your admin.</div>
+        </div>`;
+      return;
+    }
+
+    // Store ONLY metadata — period label + doc ID (not the image!)
+    allPayslipMeta = [];
+    snap.forEach(d => {
+      const data = d.data();
+      allPayslipMeta.push({
+        id:     d.id,
+        period: data.period || data.datePeriod || data.label || d.id
+      });
+    });
+
+    // Cache the light metadata list
+    lsSet(listCacheKey, allPayslipMeta);
+    shownCount = 0;
+    renderPayslipList();
+
+  } catch (err) {
+    console.error("Error fetching payslips:", err);
+    document.getElementById("payslipSummaryBody").innerHTML = `
+      <div class="payslip-empty">
+        <div class="payslip-empty-icon">⚠️</div>
+        <div class="payslip-empty-title">Could Not Load</div>
+        <div class="payslip-empty-sub">There was a problem fetching your payslips. Please try again.</div>
+      </div>`;
+  }
 };
 
+// ════════════════════════════════════════════════
+//  3. PAGINATION — render PAGE_SIZE items at a time
+// ════════════════════════════════════════════════
+function renderPayslipList() {
+  const total   = allPayslipMeta.length;
+  const newPage = allPayslipMeta.slice(shownCount, shownCount + PAGE_SIZE);
+  shownCount   += newPage.length;
+
+  // First render: create full container
+  if (shownCount === newPage.length) {
+    let html = `<div class="payslip-list">
+      <div class="payslip-list-header">
+        <span>Date Period</span>
+        <span>Payslip</span>
+      </div>
+      <div id="payslipRows"></div>`;
+
+    if (shownCount < total) {
+      html += `<button class="load-more-btn" id="loadMoreBtn" onclick="loadMorePayslips()">
+        Load more <span class="load-more-count">(${total - shownCount} remaining)</span>
+      </button>`;
+    }
+    html += `</div>`;
+    document.getElementById("payslipSummaryBody").innerHTML = html;
+  }
+
+  // Append new rows
+  const rowsEl = document.getElementById("payslipRows");
+  if (rowsEl) {
+    newPage.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "payslip-item";
+      div.innerHTML = `
+        <span class="payslip-period">
+          <span class="payslip-period-dot"></span>
+          ${escapeHtml(item.period)}
+        </span>
+        <button class="view-btn" onclick="openFullPayslip('${escapeAttr(currentEmployeeDocId)}','${escapeAttr(item.id)}','${escapeAttr(item.period)}')">View</button>`;
+      rowsEl.appendChild(div);
+    });
+  }
+
+  // Update or remove Load More button
+  const btn = document.getElementById("loadMoreBtn");
+  if (btn) {
+    if (shownCount >= total) {
+      btn.remove();
+    } else {
+      btn.innerHTML = `Load more <span class="load-more-count">(${total - shownCount} remaining)</span>`;
+    }
+  }
+}
+
+window.loadMorePayslips = function () {
+  renderPayslipList();
+};
+
+// ════════════════════════════════════════════════
+//  4. FULL PAYSLIP IMAGE — cached in sessionStorage
+//     imageBase64 is large so we cache it per-tab only
+//     (not localStorage — too big, would fill quota fast)
+//     Result: 2nd view of same payslip = 0 Firestore reads
+// ════════════════════════════════════════════════
+window.openFullPayslip = async function (empId, payslipId, period) {
+  currentPayslipSrc    = null;
+  currentPayslipPeriod = period;
+  document.getElementById("downloadPayslipBtn").style.display = "none";
+  document.getElementById("payslipViewTitle").textContent     = "Payslip";
+  document.getElementById("payslipViewSubtitle").textContent  = period;
+  document.getElementById("payslipViewBody").innerHTML = `
+    <div class="payslip-loading" style="background:#f0f2f5;min-height:200px">
+      <div class="spinner" style="border-color:rgba(59,130,246,0.2);border-top-color:#3b82f6"></div>
+      <div class="loading-text" style="color:#4b6080">Loading payslip…</div>
+    </div>`;
+  document.getElementById("payslipViewModal").classList.add("open");
+
+  // ── Check session image cache (zero reads on re-view)
+  const imgCacheKey = `payslip_img_${empId}_${payslipId}`;
+  let cachedData = ssGet(imgCacheKey);
+
+  if (!cachedData) {
+    // 🔥 1 Firestore read — only on first view
+    try {
+      const snap = await getDoc(doc(db, "employees", empId, "payslips", payslipId));
+      if (!snap.exists()) {
+        document.getElementById("payslipViewBody").innerHTML = `
+          <div class="payslip-loading" style="background:#f0f2f5;min-height:200px">
+            <div style="font-size:2rem">⚠️</div>
+            <div class="loading-text" style="color:#4b6080">Payslip not found.</div>
+          </div>`;
+        return;
+      }
+      cachedData = snap.data();
+      // Cache the full image data in session (cleared when tab closes)
+      ssSet(imgCacheKey, cachedData);
+    } catch (err) {
+      console.error("Error fetching payslip:", err);
+      document.getElementById("payslipViewBody").innerHTML = `
+        <div style="padding:30px;text-align:center;background:#f0f2f5">
+          <div style="font-size:2rem;margin-bottom:10px">⚠️</div>
+          <div style="color:#4b6080;font-size:0.82rem">Could not load payslip. Please try again.</div>
+        </div>`;
+      return;
+    }
+  }
+
+  document.getElementById("payslipViewTitle").textContent = `Payslip ${period}`;
+  renderPayslip(cachedData, period);
+};
+
+// ── Render payslip image or table ──
+function renderPayslip(data, period) {
+  const imgField = data.imageBase64 || data.imageData || data.image || data.payslipImage || data.base64;
+  if (imgField) {
+    const mimeType = data.imageType || "image/png";
+    const src = imgField.startsWith("data:") ? imgField : `data:${mimeType};base64,${imgField}`;
+    currentPayslipSrc = src;
+    document.getElementById("payslipViewBody").innerHTML =
+      `<div class="payslip-image-wrap"><img id="payslipImg" src="${src}" alt="Payslip ${escapeHtml(period)}" /></div>`;
+    document.getElementById("downloadPayslipBtn").style.display = "flex";
+    return;
+  }
+
+  const urlField = data.imageUrl || data.url || data.payslipUrl;
+  if (urlField) {
+    currentPayslipSrc = urlField;
+    document.getElementById("payslipViewBody").innerHTML =
+      `<div class="payslip-image-wrap"><img id="payslipImg" src="${escapeHtml(urlField)}" alt="Payslip ${escapeHtml(period)}" /></div>`;
+    document.getElementById("downloadPayslipBtn").style.display = "flex";
+    return;
+  }
+
+  document.getElementById("downloadPayslipBtn").style.display = "none";
+
+  // JSON table fallback
+  let html = `<div class="payslip-table-wrap">
+    <div class="payslip-doc-header">
+      <div class="payslip-doc-title">PAYSLIP</div>
+      <div class="payslip-doc-meta">${escapeHtml(period)} &nbsp;|&nbsp; ${escapeHtml(currentEmployeeName || "Employee")}</div>
+    </div><div class="payslip-doc-body">`;
+
+  const infoFields  = ["agency","posting","payslipNo","date"];
+  const fieldLabels = { agency:"Agency", posting:"Posting", payslipNo:"Payslip No.", date:"Date" };
+  if (infoFields.some(f => data[f])) {
+    html += `<div class="payslip-section-label">Details</div>`;
+    infoFields.forEach(f => {
+      if (data[f]) html += `<div class="payslip-row"><span class="payslip-row-label">${fieldLabels[f]}</span><span class="payslip-row-value">${escapeHtml(String(data[f]))}</span></div>`;
+    });
+  }
+  const gross = data.grossIncome || data.earnings || data.income;
+  if (gross && typeof gross === "object") {
+    html += `<div class="payslip-section-label">Gross Income</div>`;
+    Object.entries(gross).forEach(([k,v]) => { html += `<div class="payslip-row"><span class="payslip-row-label">${escapeHtml(k)}</span><span class="payslip-row-value">${formatCurrency(v)}</span></div>`; });
+  }
+  if (data.deductions && typeof data.deductions === "object") {
+    html += `<div class="payslip-section-label">Deductions</div>`;
+    Object.entries(data.deductions).forEach(([k,v]) => { html += `<div class="payslip-row"><span class="payslip-row-label">${escapeHtml(k)}</span><span class="payslip-row-value">${formatCurrency(v)}</span></div>`; });
+  }
+  const netPay = data.netPay || data.net || data.netAmount;
+  if (netPay) html += `<div class="payslip-total-row"><span>NET PAY</span><span class="payslip-net-pay">${formatCurrency(netPay)}</span></div>`;
+  html += `</div></div>`;
+  document.getElementById("payslipViewBody").innerHTML = html;
+}
+
+// ── Download ──
+window.downloadPayslip = function () {
+  if (!currentPayslipSrc) return;
+  const a = document.createElement("a");
+  a.href = currentPayslipSrc;
+  const safe = (currentPayslipPeriod || "payslip").replace(/[^a-zA-Z0-9\-_. ]/g,"").trim().replace(/\s+/g,"_");
+  a.download = `Payslip_${safe}.png`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+};
+
+// ── Close modals ──
+window.closePayslipSummary = function () { document.getElementById("payslipSummaryModal").classList.remove("open"); };
+window.closePayslipView    = function () { document.getElementById("payslipViewModal").classList.remove("open"); };
+
+// ── Enter key ──
 document.getElementById("emailInput").addEventListener("keydown", e => {
   if (e.key === "Enter") window.checkEmail();
 });
 </script>
-
-<!-- Help Button -->
-<button class="help-btn" onclick="document.getElementById('helpModal').classList.add('open')" title="How to use">?</button>
-
-<!-- Help Modal -->
-<div class="modal-overlay" id="helpModal" onclick="if(event.target===this)this.classList.remove('open')">
-  <div class="modal">
-    <div class="modal-header">
-      <div>
-        <div class="modal-title">Paano Gamitin / How to Use</div>
-        <div class="modal-title-sub">Email Status Checker — Employee Guide</div>
-      </div>
-      <button class="modal-close" onclick="document.getElementById('helpModal').classList.remove('open')">✕</button>
-    </div>
-    <div class="modal-body">
-
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-text">
-          <strong>I-type ang iyong personal na email / Type your personal email</strong>
-          <p>Ilagay ang iyong email address sa kahon, hal. <em style="color:#3b82f6">johndoe@gmail.com</em><br>
-          Enter your email address in the input box, e.g. <em style="color:#3b82f6">johndoe@gmail.com</em></p>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-text">
-          <strong>Suriin ang status / Check the status</strong>
-          <p>Kapag lumabas ang <span class="bi bi-v">Verified</span> — okay na! Ibig sabihin, tugma ang email mo sa system at makakatanggap ka ng payslip.<br>
-          If it shows <span class="bi bi-v">Verified</span> — you're good! Your email matches the system and you'll receive payslips.</p>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-text">
-          <strong>Kapag Bounce Email / If Bounce Email</strong>
-          <p>Kapag <span class="bi bi-b">Bounce Email</span> ang lumabas, kausapin ang iyong inspector. Ibigay ang tamang email address para ma-update sa system at makatanggap ng payslip.<br>
-          If status shows <span class="bi bi-b">Bounce Email</span>, contact your inspector. Give them your correct email so they can update it and send your payslip.</p>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-text">
-          <strong>Kapag No Email Found / If No Email Found</strong>
-          <p>Ibig sabihin, wala pang email na nai-submit sa iyong inspector. Makipag-ugnayan sa kanya agad.<br>
-          This means no email has been submitted to your inspector yet. Contact them as soon as possible.</p>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="step-num">5</div>
-        <div class="step-text">
-          <strong>Gumamit ng maliliit na letra / Use lowercase letters</strong>
-          <p>Standard ng email ang lowercase. Siguraduhing walang malalaking letra, hal. <em style="color:#3b82f6">johndoe@gmail.com</em> hindi <em style="color:#f87171">JohnDoe@Gmail.com</em><br>
-          Emails are case-sensitive in our system. Always use lowercase letters only.</p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin — Email Status Portal</title>
+  <title>Admin — Payslip Status Portal</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -39,33 +39,6 @@
       color: var(--text);
     }
 
-    /* ── Subtle grid overlay ── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(74,143,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(74,143,255,0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* ── Glow blob ── */
-    body::after {
-      content: '';
-      position: fixed;
-      top: -200px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 800px;
-      height: 500px;
-      background: radial-gradient(ellipse, rgba(45,111,232,0.12) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
     .page {
       position: relative;
       z-index: 1;
@@ -75,7 +48,6 @@
       margin: 0 auto;
     }
 
-    /* ── Header ── */
     .header {
       display: flex;
       flex-direction: column;
@@ -88,6 +60,21 @@
       width: 52px;
       height: 52px;
       margin-bottom: 4px;
+      animation: logoFloat 4s ease-in-out infinite, logoSpin 8s linear infinite;
+      transform-style: preserve-3d;
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px) rotateY(0deg); }
+      25%       { transform: translateY(-6px) rotateY(10deg); }
+      50%       { transform: translateY(-10px) rotateY(0deg); }
+      75%       { transform: translateY(-6px) rotateY(-10deg); }
+    }
+
+    @keyframes logoSpin {
+      0%   { filter: drop-shadow(0 4px 12px rgba(74,143,255,0.3)); }
+      50%  { filter: drop-shadow(0 8px 20px rgba(74,143,255,0.55)); }
+      100% { filter: drop-shadow(0 4px 12px rgba(74,143,255,0.3)); }
     }
 
     .logo-wrap svg { width: 100%; height: 100%; }
@@ -116,7 +103,60 @@
       font-weight: 300;
     }
 
-    /* ── Search toolbar ── */
+    /* ── Cache status bar ── */
+    .cache-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 14px;
+      margin-bottom: 14px;
+      font-size: 11px;
+      color: var(--text3);
+      gap: 8px;
+    }
+
+    .cache-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cache-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text3);
+      flex-shrink: 0;
+    }
+
+    .cache-dot.live { background: #3dd68c; }
+    .cache-dot.cached { background: var(--accent); }
+
+    .btn-refresh {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 4px 10px;
+      color: var(--text3);
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Sora', sans-serif;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .btn-refresh:hover { border-color: var(--border2); color: var(--text2); }
+    .btn-refresh svg { width: 11px; height: 11px; }
+    .btn-refresh.spinning svg { animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     .toolbar {
       display: flex;
       gap: 10px;
@@ -173,7 +213,6 @@
     .btn-search:hover { background: #5a9fff; }
     .btn-search:active { transform: scale(0.97); }
 
-    /* ── Filter chips ── */
     .filter-bar {
       display: flex;
       gap: 8px;
@@ -207,7 +246,6 @@
       border-color: rgba(74,143,255,0.4);
     }
 
-    /* ── Stats row ── */
     .stats-row {
       display: flex;
       gap: 10px;
@@ -233,7 +271,6 @@
       border-radius: 50%;
     }
 
-    /* ── Employee list ── */
     .emp-list { display: flex; flex-direction: column; gap: 8px; }
 
     .emp-card {
@@ -363,7 +400,13 @@
     .action-btn:hover { background: rgba(255,255,255,0.07); }
     .action-btn svg { width: 16px; height: 16px; }
 
-    /* ── Empty state ── */
+    a.action-btn {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .empty {
       display: flex;
       flex-direction: column;
@@ -378,7 +421,6 @@
     .empty svg { opacity: 0.3; }
     .empty p { font-size: 14px; }
 
-    /* ── FAB ── */
     .fab {
       position: fixed;
       bottom: 28px;
@@ -409,7 +451,6 @@
 
     .fab:active { transform: scale(0.95) translateY(0); }
 
-    /* ── Modal overlay ── */
     .overlay {
       position: fixed;
       inset: 0;
@@ -538,7 +579,6 @@
     .btn-del-confirm { background: #c0202e; color: #fff; }
     .btn-del-confirm:hover { background: #d42535; }
 
-    /* ── Toast ── */
     .toast {
       position: fixed;
       bottom: 100px;
@@ -564,7 +604,6 @@
 
     .toast.show { opacity: 1; }
 
-    /* ── Loading skeleton ── */
     .skeleton {
       background: linear-gradient(90deg, var(--bg3) 25%, rgba(255,255,255,0.04) 50%, var(--bg3) 75%);
       background-size: 200% 100%;
@@ -592,7 +631,6 @@
     .skel-avatar { width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0; }
     .skel-body { flex: 1; display: flex; flex-direction: column; gap: 8px; }
 
-    /* ── Count badge ── */
     .count-badge {
       display: inline-flex;
       align-items: center;
@@ -607,7 +645,6 @@
       vertical-align: middle;
     }
 
-    /* ── Divider ── */
     .section-label {
       font-size: 11px;
       font-weight: 600;
@@ -635,7 +672,6 @@
   <!-- Header -->
   <div class="header">
     <div class="logo-wrap">
-      <!-- Same 3D box SVG as index.html -->
       <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="topFace" x1="20" y1="10" x2="60" y2="35" gradientUnits="userSpaceOnUse">
@@ -651,19 +687,30 @@
             <stop offset="100%" stop-color="#2260c8"/>
           </linearGradient>
         </defs>
-        <!-- Top face -->
         <polygon points="40,8 70,26 40,44 10,26" fill="url(#topFace)"/>
-        <!-- Left face -->
         <polygon points="10,26 40,44 40,72 10,54" fill="url(#leftFace)"/>
-        <!-- Right face -->
         <polygon points="40,44 70,26 70,54 40,72" fill="url(#rightFace)"/>
-        <!-- Shine line -->
         <line x1="40" y1="8" x2="40" y2="44" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
       </svg>
     </div>
     <div class="eyebrow">Admin Portal</div>
-    <h1>Manage <span>Email Status</span></h1>
+    <h1>Manage <span>Payslip Status</span></h1>
     <p class="header-sub">Add, edit, and delete employee records</p>
+  </div>
+
+  <!-- Cache status bar -->
+  <div class="cache-bar">
+    <div class="cache-bar-left">
+      <div class="cache-dot" id="cacheDot"></div>
+      <span id="cacheStatus">Loading…</span>
+    </div>
+    <button class="btn-refresh" id="refreshBtn" onclick="forceRefresh()">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <path d="M13.5 8A5.5 5.5 0 112.5 5"/>
+        <path d="M2.5 2v3h3"/>
+      </svg>
+      Refresh
+    </button>
   </div>
 
   <!-- Search -->
@@ -775,6 +822,31 @@
   </div>
 </div>
 
+<!-- Duplicate Warning Modal -->
+<div class="overlay hidden" id="dupModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-icon" style="background:rgba(212,184,0,0.15);border-color:rgba(212,184,0,0.3)">
+        <svg viewBox="0 0 20 20" fill="none" stroke="#d4b800" stroke-width="1.8" stroke-linecap="round">
+          <path d="M10 3L18 17H2L10 3z"/><line x1="10" y1="9" x2="10" y2="13"/><circle cx="10" cy="15.5" r="0.5" fill="#d4b800"/>
+        </svg>
+      </div>
+      <h2>Possible Duplicate Detected</h2>
+    </div>
+    <div id="dupReason" style="background:rgba(212,184,0,0.1);border:1px solid rgba(212,184,0,0.25);border-radius:8px;padding:8px 12px;font-size:12px;color:#d4b800;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 3L18 17H2L10 3z"/></svg>
+      <span id="dupReasonText"></span>
+    </div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6;">Adding a duplicate may cause issues with payslip delivery.</p>
+    <div id="dupCard" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:18px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeModal('dupModal')">Go back</button>
+      <button class="btn" style="background:#d4b800;color:#1a1200;" onclick="forceSave()">Add anyway</button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast -->
 <div class="toast" id="toast">
   <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 0a7 7 0 100 14A7 7 0 007 0zm3.5 5.5l-4 4a.7.7 0 01-1 0l-2-2a.7.7 0 011-1l1.5 1.5 3.5-3.5a.7.7 0 011 1z"/></svg>
@@ -795,10 +867,57 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
+// ── Cache config ──
+const CACHE_KEY = 'admin_employees_cache';
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in ms
+
 let employees    = [];
 let editingId    = null;
 let deletingId   = null;
 let activeAgency = "ALL";
+
+// ── localStorage cache helpers ──
+function saveCache(data) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({
+      ts: Date.now(),
+      data
+    }));
+  } catch(e) {
+    // localStorage full (payslip images?) — skip silently
+    console.warn('Cache write failed:', e.message);
+  }
+}
+
+function loadCache() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (Date.now() - parsed.ts > CACHE_TTL) return null; // expired
+    return parsed;
+  } catch(e) {
+    return null;
+  }
+}
+
+function clearCache() {
+  localStorage.removeItem(CACHE_KEY);
+}
+
+function setCacheBar(mode, ts) {
+  const dot    = document.getElementById('cacheDot');
+  const status = document.getElementById('cacheStatus');
+  if (mode === 'live') {
+    dot.className = 'cache-dot live';
+    status.textContent = 'Live data — fetched just now';
+  } else if (mode === 'cached') {
+    const ago = Math.round((Date.now() - ts) / 1000);
+    const label = ago < 60 ? `${ago}s ago` : `${Math.round(ago/60)}m ago`;
+    dot.className = 'cache-dot cached';
+    status.textContent = `Cached data · last synced ${label}`;
+  }
+}
 
 function generateEmpId() {
   return "emp_" + Date.now();
@@ -819,12 +938,40 @@ window.setAgency = function(el) {
   renderList();
 };
 
-async function loadEmployees() {
+// ── Force refresh: skip cache, fetch from Firestore ──
+window.forceRefresh = async function() {
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  btn.disabled = true;
+  clearCache();
+  await loadEmployees(true);
+  btn.classList.remove('spinning');
+  btn.disabled = false;
+  showToast('Data refreshed from Firestore.');
+};
+
+async function loadEmployees(force = false) {
+  // Try cache first (unless force)
+  if (!force) {
+    const cached = loadCache();
+    if (cached) {
+      employees = cached.data;
+      document.getElementById('skelContainer').style.display = 'none';
+      setCacheBar('cached', cached.ts);
+      renderList();
+      return; // ✅ Zero Firestore reads!
+    }
+  }
+
+  // Cache miss or force — fetch from Firestore
   try {
     const snap = await getDocs(collection(db, "employees"));
     employees = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    saveCache(employees);
+    setCacheBar('live', Date.now());
   } catch(e) {
     console.error(e);
+    showToast('Error loading employees.', true);
   }
   document.getElementById('skelContainer').style.display = 'none';
   renderList();
@@ -873,6 +1020,11 @@ window.renderList = function() {
         </div>
       </div>
       <div class="emp-actions">
+        <a class="action-btn view-btn" href="payslipsummary.html?id=${e.id}&name=${encodeURIComponent(e.Name||'')}" title="View Payslips">
+          <svg viewBox="0 0 20 20" fill="none" stroke="#3dd68c" stroke-width="1.8" stroke-linecap="round">
+            <ellipse cx="10" cy="10" rx="8" ry="5"/><circle cx="10" cy="10" r="2"/>
+          </svg>
+        </a>
         <button class="action-btn" onclick="openEdit('${e.id}')" title="Edit">
           <svg viewBox="0 0 20 20" fill="none" stroke="#5090e0" stroke-width="1.8" stroke-linecap="round">
             <path d="M14.7 3.3a1.4 1.4 0 012 2L6.5 15.5l-3 .5.5-3L14.7 3.3z"/>
@@ -910,7 +1062,9 @@ window.openEdit = function(id) {
   document.getElementById('formModal').classList.remove('hidden');
 };
 
-window.saveEmployee = async function() {
+let pendingSaveData = null; // holds data when user chooses to force-save
+
+window.saveEmployee = async function(force = false) {
   const data = {
     Name:      document.getElementById('fName').value.trim(),
     Email:     document.getElementById('fEmail').value.trim().toLowerCase(),
@@ -920,6 +1074,49 @@ window.saveEmployee = async function() {
     updatedAt: new Date().toISOString()
   };
   if (!data.Name) { showToast('Name is required.', true); return; }
+
+  // ── Duplicate check (skip if force) ──
+  if (!force) {
+    const nameLower  = data.Name.toLowerCase();
+    const emailLower = data.Email.toLowerCase();
+    const dup = employees.find(e => {
+      if (editingId && e.id === editingId) return false; // ignore self when editing
+      const sameName  = e.Name  && e.Name.toLowerCase()  === nameLower;
+      const sameEmail = e.Email && e.Email.toLowerCase() === emailLower && emailLower !== '';
+      return sameName || sameEmail;
+    });
+
+    if (dup) {
+      // Determine reason label
+      const reasons = [];
+      if (dup.Name  && dup.Name.toLowerCase()  === nameLower)  reasons.push('same name');
+      if (dup.Email && dup.Email.toLowerCase() === emailLower && emailLower !== '') reasons.push('same email address');
+      document.getElementById('dupReasonText').textContent =
+        (reasons.length === 2 ? 'Same name and email address' : reasons[0][0].toUpperCase() + reasons[0].slice(1)) + ' already exists in the records.';
+
+      // Show existing record card
+      const badgeCls = s => ({'VERIFIED':'badge-verified','BOUNCE EMAIL':'badge-bounce','INVALID':'badge-invalid','PENDING':'badge-pending','NO EMAIL':'badge-noemail'}[s] || 'badge-pending');
+      document.getElementById('dupCard').innerHTML = `
+        <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;">Existing record</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="emp-avatar">${getInitials(dup.Name)}</div>
+          <div>
+            <div class="emp-name">${dup.Name || '—'}</div>
+            <div class="emp-email">${dup.Email || '<span style="color:var(--text3);font-style:italic">No email</span>'}</div>
+            <div style="margin-top:6px;">
+              <span class="badge ${badgeCls(dup.Status)}">${dup.Status || 'PENDING'}</span>
+              ${dup.Agency ? `<span class="emp-agency-tag" style="margin-left:6px;">${dup.Agency}</span>` : ''}
+            </div>
+          </div>
+        </div>`;
+      pendingSaveData = { data, editingId };
+      closeModal('formModal');
+      document.getElementById('dupModal').classList.remove('hidden');
+      return;
+    }
+  }
+
+  // ── Proceed with save ──
   try {
     if (editingId) {
       await updateDoc(doc(db, "employees", editingId), data);
@@ -932,9 +1129,37 @@ window.saveEmployee = async function() {
       employees.push({ id: newId, ...data });
       showToast('Employee added successfully.');
     }
+    saveCache(employees);
+    setCacheBar('live', Date.now());
     closeModal('formModal');
+    closeModal('dupModal');
     renderList();
   } catch(err) { showToast('Error saving. Please try again.', true); console.error(err); }
+};
+
+window.forceSave = async function() {
+  if (!pendingSaveData) return;
+  editingId = pendingSaveData.editingId;
+  // re-populate fields so saveEmployee reads them (or directly pass data)
+  const { data } = pendingSaveData;
+  pendingSaveData = null;
+  closeModal('dupModal');
+  try {
+    if (editingId) {
+      await updateDoc(doc(db, "employees", editingId), data);
+      const idx = employees.findIndex(x => x.id === editingId);
+      employees[idx] = { id: editingId, ...data };
+      showToast('Employee updated successfully.');
+    } else {
+      const newId = generateEmpId();
+      await setDoc(doc(db, "employees", newId), data);
+      employees.push({ id: newId, ...data });
+      showToast('Employee added (duplicate acknowledged).');
+    }
+    saveCache(employees);
+    setCacheBar('live', Date.now());
+    renderList();
+  } catch(err) { showToast('Error saving. Please try again.', true); }
 };
 
 window.openDelete = function(id) {
@@ -949,6 +1174,8 @@ window.confirmDelete = async function() {
   try {
     await deleteDoc(doc(db, "employees", deletingId));
     employees = employees.filter(x => x.id !== deletingId);
+    // Update cache after delete
+    saveCache(employees);
     closeModal('delModal');
     renderList();
     showToast('Employee deleted.');

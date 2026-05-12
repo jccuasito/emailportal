@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payslip Summary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0b1528;
+      --bg2:       #0f1e36;
+      --bg3:       #112040;
+      --card:      #0e1c35;
+      --border:    rgba(100,160,255,0.12);
+      --border2:   rgba(100,160,255,0.2);
+      --accent:    #4a8fff;
+      --text:      #d4e6ff;
+      --text2:     #7a9cc8;
+      --text3:     #4a6a98;
+    }
+
+    html, body {
+      background: var(--bg);
+      min-height: 100%;
+      font-family: 'Sora', sans-serif;
+      color: var(--text);
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 32px 20px 120px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .logo-wrap {
+      width: 52px;
+      height: 52px;
+      margin-bottom: 4px;
+      animation: logoFloat 4s ease-in-out infinite;
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px) rotateY(0deg); filter: drop-shadow(0 4px 12px rgba(74,143,255,0.3)); }
+      25%       { transform: translateY(-6px) rotateY(10deg); }
+      50%       { transform: translateY(-10px) rotateY(0deg); filter: drop-shadow(0 8px 20px rgba(74,143,255,0.55)); }
+      75%       { transform: translateY(-6px) rotateY(-10deg); }
+    }
+
+    .logo-wrap svg { width: 100%; height: 100%; }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .header h1 {
+      font-size: clamp(20px, 5vw, 28px);
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .header h1 span { color: var(--accent); }
+
+    .emp-name-label {
+      font-size: 13px;
+      color: var(--text2);
+      font-weight: 500;
+    }
+
+    /* ── Back button ── */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 14px;
+      color: var(--text2);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Sora', sans-serif;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      margin-bottom: 24px;
+      align-self: flex-start;
+    }
+
+    .back-btn:hover { border-color: var(--border2); color: var(--text); }
+    .back-btn svg { width: 14px; height: 14px; }
+
+    /* ── Section label ── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      color: var(--text3);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .count-badge {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(74,143,255,0.1);
+      color: var(--accent);
+      border: 1px solid rgba(74,143,255,0.2);
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    /* ── Payslip table ── */
+    .payslip-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .payslip-table th {
+      background: var(--bg3);
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--text3);
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .payslip-table td {
+      padding: 13px 16px;
+      font-size: 13px;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .payslip-table tr:last-child td { border-bottom: none; }
+
+    .payslip-table tr {
+      transition: background 0.15s;
+      animation: fadeIn 0.25s ease both;
+    }
+
+    .payslip-table tbody tr:hover { background: var(--bg3); }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .period-text {
+      font-weight: 500;
+      color: #e8f2ff;
+    }
+
+    .view-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 5px 12px;
+      border-radius: 8px;
+      background: rgba(74,143,255,0.1);
+      border: 1px solid rgba(74,143,255,0.2);
+      transition: background 0.15s, border-color 0.15s;
+      cursor: pointer;
+    }
+
+    .view-link:hover { background: rgba(74,143,255,0.18); border-color: rgba(74,143,255,0.35); }
+
+    .action-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 7px;
+      border-radius: 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+
+    .action-btn:hover { background: rgba(255,255,255,0.07); }
+    .action-btn svg { width: 15px; height: 15px; }
+
+    .td-actions { display: flex; align-items: center; gap: 2px; }
+
+    /* ── Empty state ── */
+    .empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 50px 20px;
+      gap: 10px;
+      color: var(--text3);
+      text-align: center;
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      background: var(--card);
+    }
+
+    .empty svg { opacity: 0.3; }
+    .empty p { font-size: 13px; }
+
+    /* ── Add Payslips button ── */
+    .add-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px;
+      border-radius: 12px;
+      border: 1px dashed rgba(74,143,255,0.3);
+      background: rgba(74,143,255,0.05);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Sora', sans-serif;
+      cursor: pointer;
+      transition: background 0.18s, border-color 0.18s;
+      margin-top: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .add-btn:hover { background: rgba(74,143,255,0.1); border-color: rgba(74,143,255,0.5); }
+
+    /* ── Loading skeleton ── */
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg3) 25%, rgba(255,255,255,0.04) 50%, var(--bg3) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 6px;
+      height: 13px;
+      display: inline-block;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ── Modal overlay ── */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 12, 28, 0.85);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .overlay.hidden { display: none; }
+
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 22px 22px 0 0;
+      padding: 24px 22px 36px;
+      width: 100%;
+      max-width: 520px;
+      max-height: 92vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    @media (min-width: 600px) {
+      .overlay { align-items: center; }
+      .modal { border-radius: 20px; max-height: 85vh; }
+    }
+
+    .modal-handle {
+      width: 36px;
+      height: 3px;
+      background: var(--border2);
+      border-radius: 4px;
+      margin: 0 auto 20px;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .modal-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(74,143,255,0.15);
+      border: 1px solid rgba(74,143,255,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .modal-icon svg { width: 18px; height: 18px; color: var(--accent); }
+
+    .modal h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #e8f2ff;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 8px;
+      color: var(--text3);
+      display: flex;
+      align-items: center;
+      transition: background 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+
+    .modal-close:hover { background: rgba(255,255,255,0.07); color: var(--text2); }
+    .modal-close svg { width: 16px; height: 16px; }
+
+    .modal label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text3);
+      display: block;
+      margin-bottom: 6px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .modal input {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: 'Sora', sans-serif;
+      outline: none;
+      margin-bottom: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .modal input:focus { border-color: var(--border2); }
+    .modal input::placeholder { color: var(--text3); }
+
+    /* ── File upload zone ── */
+    .upload-zone {
+      width: 100%;
+      border: 2px dashed rgba(74,143,255,0.25);
+      border-radius: 12px;
+      padding: 28px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: var(--bg3);
+      margin-bottom: 14px;
+      position: relative;
+      text-align: center;
+    }
+
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: rgba(74,143,255,0.5);
+      background: rgba(74,143,255,0.05);
+    }
+
+    .upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      border: none;
+    }
+
+    .upload-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(74,143,255,0.1);
+      border: 1px solid rgba(74,143,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .upload-icon svg { width: 20px; height: 20px; color: var(--accent); }
+
+    .upload-text {
+      font-size: 13px;
+      color: var(--text2);
+    }
+
+    .upload-text span {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .paste-zone {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(74,143,255,0.04);
+      border: 1px dashed rgba(74,143,255,0.2);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      font-size: 12px;
+      color: var(--text3);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+      outline: none;
+      user-select: none;
+    }
+
+    .paste-zone:focus, .paste-zone.pasting {
+      border-color: rgba(74,143,255,0.5);
+      background: rgba(74,143,255,0.08);
+      color: var(--text2);
+    }
+
+    .paste-zone kbd {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-size: 11px;
+      font-family: monospace;
+      color: var(--accent);
+    }
+
+    .paste-zone svg { flex-shrink: 0; color: var(--accent); }
+
+    .upload-hint {
+      font-size: 11px;
+      color: var(--text3);
+    }
+
+    .preview-wrap {
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+
+    .preview-wrap img {
+      width: 100%;
+      display: block;
+      max-height: 200px;
+      object-fit: contain;
+      background: var(--bg);
+    }
+
+    .modal-actions { display: flex; gap: 10px; margin-top: 6px; }
+
+    .btn {
+      padding: 13px 20px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Sora', sans-serif;
+      flex: 1;
+      transition: background 0.15s, transform 0.1s;
+      letter-spacing: 0.2px;
+    }
+
+    .btn:active { transform: scale(0.97); }
+    .btn-cancel { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
+    .btn-cancel:hover { background: rgba(255,255,255,0.06); }
+    .btn-save { background: var(--accent); color: #fff; }
+    .btn-save:hover { background: #5a9fff; }
+    .btn-del-confirm { background: #c0202e; color: #fff; }
+    .btn-del-confirm:hover { background: #d42535; }
+
+    /* ── View image modal ── */
+    .img-modal {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 20px;
+      padding: 20px;
+      width: 95%;
+      max-width: 560px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .img-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .img-modal-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #e8f2ff;
+    }
+
+    .img-modal img {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      max-height: 70vh;
+      object-fit: contain;
+      background: var(--bg);
+    }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0e2a20;
+      color: #3dd68c;
+      border: 1px solid #1a5040;
+      border-radius: 12px;
+      padding: 11px 22px;
+      font-size: 13px;
+      font-family: 'Sora', sans-serif;
+      font-weight: 500;
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast.show { opacity: 1; }
+
+    /* ── Delete confirm modal ── */
+    #delModal .modal { max-width: 400px; }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-wrap">
+      <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="topFace" x1="20" y1="10" x2="60" y2="35" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#7ab8ff"/>
+            <stop offset="100%" stop-color="#4a8fff"/>
+          </linearGradient>
+          <linearGradient id="leftFace" x1="10" y1="35" x2="40" y2="70" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#2d6fe8"/>
+            <stop offset="100%" stop-color="#1a4db8"/>
+          </linearGradient>
+          <linearGradient id="rightFace" x1="40" y1="35" x2="70" y2="70" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#3a80f0"/>
+            <stop offset="100%" stop-color="#2260c8"/>
+          </linearGradient>
+        </defs>
+        <polygon points="40,8 70,26 40,44 10,26" fill="url(#topFace)"/>
+        <polygon points="10,26 40,44 40,72 10,54" fill="url(#leftFace)"/>
+        <polygon points="40,44 70,26 70,54 40,72" fill="url(#rightFace)"/>
+        <line x1="40" y1="8" x2="40" y2="44" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="eyebrow">Payslip Summary</div>
+    <h1><span id="headerName">—</span></h1>
+  </div>
+
+  <a class="back-btn" href="admin.html">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <path d="M12 5l-5 5 5 5"/>
+    </svg>
+    Back to Admin
+  </a>
+
+  <div class="section-label">
+    Payslips
+    <span class="count-badge" id="countBadge">—</span>
+  </div>
+
+  <!-- Payslip list -->
+  <div id="listWrap"></div>
+
+  <!-- Add Payslips button -->
+  <button class="add-btn" onclick="openAdd()">
+    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="10" y1="4" x2="10" y2="16"/><line x1="4" y1="10" x2="16" y2="10"/>
+    </svg>
+    ADD PAYSLIPS
+  </button>
+
+</div>
+
+<!-- Add Payslip Modal -->
+<div class="overlay hidden" id="addModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="4" y="3" width="12" height="14" rx="2"/>
+            <line x1="7" y1="7" x2="13" y2="7"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="13" x2="10" y2="13"/>
+          </svg>
+        </div>
+        <h2>Add Payslips</h2>
+      </div>
+      <button class="modal-close" onclick="closeModal('addModal')">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/>
+        </svg>
+      </button>
+    </div>
+
+    <label>Period Description</label>
+    <input id="aPeriod" placeholder="e.g. March 1–15, 2026" autocomplete="off">
+
+    <label>Payslip Image</label>
+    <div id="uploadZone" class="upload-zone" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+      <input type="file" id="fileInput" accept="image/*" onchange="onFileChange(event)">
+      <div class="upload-icon">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M10 13V4M6 8l4-4 4 4"/>
+          <path d="M3 14v1a2 2 0 002 2h10a2 2 0 002-2v-1"/>
+        </svg>
+      </div>
+      <div class="upload-text">Drag an image here or <span>upload a file</span></div>
+      <div class="upload-hint">PNG, JPG, WEBP supported</div>
+    </div>
+
+    <!-- Paste zone -->
+    <div id="pasteZone" class="paste-zone" tabindex="0" title="Click here then Ctrl+V / Cmd+V to paste screenshot">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" width="16" height="16">
+        <rect x="5" y="3" width="10" height="3" rx="1"/>
+        <rect x="3" y="5" width="14" height="12" rx="2"/>
+        <line x1="7" y1="10" x2="13" y2="10"/><line x1="10" y1="7" x2="10" y2="13"/>
+      </svg>
+      <span>Click here then <kbd>Ctrl+V</kbd> / <kbd>Cmd+V</kbd> to paste screenshot</span>
+    </div>
+
+    <div id="previewWrap" class="preview-wrap" style="display:none">
+      <img id="previewImg" src="" alt="Preview">
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeModal('addModal'); clearForm()">Cancel</button>
+      <button class="btn btn-save" onclick="savePayslip()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- View Image Modal -->
+<div class="overlay hidden" id="viewModal">
+  <div class="img-modal">
+    <div class="img-modal-header">
+      <div class="img-modal-title" id="viewPeriodLabel">—</div>
+      <button class="modal-close" onclick="closeModal('viewModal')">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/>
+        </svg>
+      </button>
+    </div>
+    <img id="viewImg" src="" alt="Payslip">
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="overlay hidden" id="delModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-icon" style="background:rgba(192,32,46,0.15);border-color:rgba(192,32,46,0.3)">
+          <svg viewBox="0 0 20 20" fill="none" stroke="#e05060" stroke-width="1.8">
+            <path d="M5 7h10M8 7V5h4v2M9 10v5M11 10v5M6 7l1 9h6l1-9" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h2>Delete Payslip?</h2>
+      </div>
+      <button class="modal-close" onclick="closeModal('delModal')">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="5" y1="5" x2="15" y2="15"/><line x1="15" y1="5" x2="5" y2="15"/>
+        </svg>
+      </button>
+    </div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6;">This action is permanent and cannot be undone.</p>
+    <div id="delPeriodInfo" style="font-size:14px;color:var(--text);font-weight:500;margin-bottom:22px;padding:12px 14px;background:var(--bg3);border-radius:10px;border:1px solid var(--border);"></div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeModal('delModal')">Cancel</button>
+      <button class="btn btn-del-confirm" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 0a7 7 0 100 14A7 7 0 007 0zm3.5 5.5l-4 4a.7.7 0 01-1 0l-2-2a.7.7 0 011-1l1.5 1.5 3.5-3.5a.7.7 0 011 1z"/></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCY1OJRqCXpaqlM8Pj9fK_itg8jhC311I4",
+  authDomain: "email-checker-24db4.firebaseapp.com",
+  projectId: "email-checker-24db4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ── Read URL params ──
+const params   = new URLSearchParams(location.search);
+const empId    = params.get('id')   || '';
+const empName  = params.get('name') || 'Employee';
+
+document.getElementById('headerName').textContent = empName;
+document.title = `Payslips — ${empName}`;
+
+let payslips    = [];
+let deletingId  = null;
+let selectedFile = null;
+
+// ── Load payslips ──
+async function load() {
+  const listWrap = document.getElementById('listWrap');
+  listWrap.innerHTML = `<table class="payslip-table"><thead><tr>
+    <th>Date Period</th><th>Payslip</th><th>Actions</th>
+  </tr></thead><tbody id="tbody">
+    <tr><td colspan="3"><span class="skeleton" style="width:60%"></span></td></tr>
+    <tr><td colspan="3"><span class="skeleton" style="width:40%"></span></td></tr>
+  </tbody></table>`;
+
+  try {
+    const snap = await getDocs(collection(db, "employees", empId, "payslips"));
+    payslips = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch(e) {
+    console.error(e);
+  }
+  renderList();
+}
+
+function renderList() {
+  const listWrap = document.getElementById('listWrap');
+  document.getElementById('countBadge').textContent = payslips.length;
+
+  if (!payslips.length) {
+    listWrap.innerHTML = `
+      <div class="empty">
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="#4a6a98" stroke-width="1.4">
+          <rect x="8" y="6" width="28" height="32" rx="4"/>
+          <line x1="14" y1="14" x2="30" y2="14"/>
+          <line x1="14" y1="20" x2="30" y2="20"/>
+          <line x1="14" y1="26" x2="22" y2="26"/>
+        </svg>
+        <p>No payslips yet</p>
+      </div>`;
+    return;
+  }
+
+  listWrap.innerHTML = `
+    <table class="payslip-table">
+      <thead>
+        <tr>
+          <th>Date Period</th>
+          <th>Payslip</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${payslips.map((p, i) => `
+          <tr style="animation-delay:${i*0.04}s">
+            <td class="period-text">${p.period || '—'}</td>
+            <td>
+              ${(p.imageBase64 || p.imageUrl)
+                ? `<button class="view-link" onclick="viewPayslip(${i})">
+                    <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                      <ellipse cx="10" cy="10" rx="8" ry="5"/><circle cx="10" cy="10" r="2"/>
+                    </svg>
+                    View
+                  </button>`
+                : `<span style="color:var(--text3);font-size:12px;font-style:italic">No image</span>`}
+            </td>
+            <td>
+              <div class="td-actions">
+                <button class="action-btn" onclick="openDelete(${i})" title="Delete">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="#e05060" stroke-width="1.8" stroke-linecap="round">
+                    <path d="M5 7h10M8 7V5h4v2M9 10v5M11 10v5M6 7l1 9h6l1-9"/>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ── File handling ──
+window.onDragOver = (e) => {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.add('drag-over');
+};
+window.onDragLeave = () => {
+  document.getElementById('uploadZone').classList.remove('drag-over');
+};
+window.onDrop = (e) => {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) setPreview(file);
+};
+window.onFileChange = (e) => {
+  const file = e.target.files[0];
+  if (file) setPreview(file);
+};
+
+function setPreview(file) {
+  selectedFile = file;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    document.getElementById('previewImg').src = ev.target.result;
+    document.getElementById('previewWrap').style.display = '';
+    document.getElementById('uploadZone').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearForm() {
+  document.getElementById('aPeriod').value = '';
+  document.getElementById('fileInput').value = '';
+  document.getElementById('previewImg').src = '';
+  document.getElementById('previewWrap').style.display = 'none';
+  document.getElementById('uploadZone').style.display = '';
+  const pz = document.getElementById('pasteZone');
+  if (pz) { pz.querySelector('span').textContent = 'Click here then '; pz.innerHTML = pz.innerHTML; }
+  selectedFile = null;
+}
+
+// ── Add payslip ──
+// ── Paste from clipboard ──
+function setupPaste() {
+  const zone = document.getElementById('pasteZone');
+  if (!zone) return;
+
+  zone.addEventListener('focus', () => zone.classList.add('pasting'));
+  zone.addEventListener('blur',  () => zone.classList.remove('pasting'));
+  zone.addEventListener('click', () => zone.focus());
+
+  // Global paste listener — works when zone is focused OR anywhere in addModal
+  document.addEventListener('paste', (e) => {
+    const modal = document.getElementById('addModal');
+    if (modal.classList.contains('hidden')) return;
+    const items = e.clipboardData && e.clipboardData.items;
+    if (!items) return;
+    for (const item of items) {
+      if (item.type.startsWith('image/')) {
+        const file = item.getAsFile();
+        if (file) {
+          setPreview(file);
+          zone.blur();
+          showToast('Screenshot pasted!');
+        }
+        break;
+      }
+    }
+  });
+}
+
+window.openAdd = () => {
+  clearForm();
+  document.getElementById('addModal').classList.remove('hidden');
+};
+
+window.savePayslip = async () => {
+  const period = document.getElementById('aPeriod').value.trim();
+  if (!period) { showToast('Period description is required.', true); return; }
+  if (!selectedFile) { showToast('Please attach a payslip image.', true); return; }
+
+  const saveBtn = document.querySelector('#addModal .btn-save');
+  const origText = saveBtn.textContent;
+  saveBtn.textContent = 'Saving…';
+  saveBtn.disabled = true;
+
+  try {
+    // Convert image to base64 and store directly in Firestore
+    const base64 = await fileToBase64(selectedFile);
+
+    const docRef = await addDoc(collection(db, "employees", empId, "payslips"), {
+      period,
+      imageBase64: base64,
+      imageType: selectedFile.type || 'image/png',
+      createdAt: new Date().toISOString()
+    });
+
+    payslips.push({ id: docRef.id, period, imageBase64: base64, imageType: selectedFile.type });
+    closeModal('addModal');
+    clearForm();
+    renderList();
+    showToast('Payslip saved successfully!');
+  } catch(e) {
+    console.error('Save error:', e);
+    showToast('Error saving: ' + (e.message || e.code || 'unknown'), true);
+  } finally {
+    saveBtn.textContent = origText;
+    saveBtn.disabled = false;
+  }
+};
+
+// Convert File/Blob to base64 data URL
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── View image ──
+window.viewPayslip = (idx) => {
+  const p = payslips[idx];
+  if (!p) return;
+  const src = p.imageBase64 || p.imageUrl || '';
+  document.getElementById('viewImg').src = src;
+  document.getElementById('viewPeriodLabel').textContent = p.period || 'Payslip';
+  document.getElementById('viewModal').classList.remove('hidden');
+};
+
+// ── Delete ──
+window.openDelete = (idx) => {
+  const p = payslips[idx];
+  if (!p) return;
+  deletingId = p.id;
+  document.getElementById('delPeriodInfo').textContent = p.period || 'This payslip';
+  document.getElementById('delModal').classList.remove('hidden');
+};
+
+window.confirmDelete = async () => {
+  try {
+    await deleteDoc(doc(db, "employees", empId, "payslips", deletingId));
+    payslips = payslips.filter(p => p.id !== deletingId);
+    closeModal('delModal');
+    renderList();
+    showToast('Payslip deleted.');
+  } catch(e) {
+    showToast('Error deleting.', true);
+  }
+};
+
+// ── Helpers ──
+window.closeModal = (id) => {
+  document.getElementById(id).classList.add('hidden');
+};
+
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.style.background  = isError ? '#2a0e18' : '#0e2a20';
+  t.style.color       = isError ? '#e06080' : '#3dd68c';
+  t.style.borderColor = isError ? '#5a1828' : '#1a5040';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), isError ? 6000 : 3000);
+}
+
+setupPaste();
+load();
+</script>
+</body>
+</html>
