@@ -100,6 +100,7 @@
     }
     .check-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(59,130,246,0.55); }
     .check-btn:active { transform: translateY(0); }
+    .check-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
     .result-card, .msg-card {
       width: 100%;
@@ -164,7 +165,6 @@
     .msg-icon.warn  { background: rgba(245,158,11,0.12); }
     .msg-icon.error { background: rgba(239,68,68,0.1); }
     .msg-icon.info  { background: rgba(59,130,246,0.12); }
-    .msg-icon.quota { background: rgba(139,92,246,0.12); }
     .msg-big {
       font-family: 'Sora', sans-serif;
       font-size: clamp(0.95rem, 4vw, 1.15rem);
@@ -174,7 +174,7 @@
     .msg-sub { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
     .msg-sub em { color: var(--accent); font-style: italic; }
 
-    /* ── Quota / Come-back-tomorrow card ── */
+    /* ── Quota Card ── */
     .quota-card {
       width: 100%;
       background: rgba(139,92,246,0.07);
@@ -192,8 +192,6 @@
       background: linear-gradient(90deg, #8b5cf6, #a78bfa);
     }
     .quota-inner { padding: 28px 24px; text-align: center; }
-
-    /* Moon + stars illustration */
     .quota-illustration {
       margin: 0 auto 18px;
       width: 72px; height: 72px;
@@ -211,10 +209,8 @@
       50%       { transform: translateY(-6px) rotate(5deg); }
     }
     .quota-illustration .star {
-      position: absolute;
-      font-size: 0.65rem;
-      animation: twinkle 2s ease-in-out infinite;
-      opacity: 0.7;
+      position: absolute; font-size: 0.65rem;
+      animation: twinkle 2s ease-in-out infinite; opacity: 0.7;
     }
     .quota-illustration .star:nth-child(2) { top: 4px;  right: 2px;  animation-delay: 0s; }
     .quota-illustration .star:nth-child(3) { top: 10px; left: 6px;   animation-delay: 0.6s; }
@@ -223,48 +219,31 @@
       0%, 100% { opacity: 0.7; transform: scale(1); }
       50%       { opacity: 0.2; transform: scale(0.6); }
     }
-
     .quota-title {
-      font-family: 'Sora', sans-serif;
-      font-size: 1.05rem; font-weight: 700;
-      color: #c4b5fd; letter-spacing: 0.04em;
-      text-transform: uppercase; margin-bottom: 10px;
+      font-family: 'Sora', sans-serif; font-size: 1.05rem; font-weight: 700;
+      color: #c4b5fd; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 10px;
     }
-    .quota-sub {
-      font-size: 0.82rem; color: var(--muted);
-      line-height: 1.65; margin-bottom: 18px;
-    }
+    .quota-sub { font-size: 0.82rem; color: var(--muted); line-height: 1.65; margin-bottom: 18px; }
     .quota-sub strong { color: #e2eaf6; font-weight: 500; }
-
-    /* Reset countdown pill */
     .quota-reset-pill {
       display: inline-flex; align-items: center; gap: 7px;
-      background: rgba(139,92,246,0.12);
-      border: 1px solid rgba(139,92,246,0.3);
+      background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.3);
       border-radius: 30px; padding: 7px 16px;
       font-size: 0.75rem; font-family: 'Sora', sans-serif;
-      font-weight: 600; color: #a78bfa;
-      margin-bottom: 18px;
+      font-weight: 600; color: #a78bfa; margin-bottom: 18px;
     }
     .quota-reset-pill .pill-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: #8b5cf6;
+      width: 7px; height: 7px; border-radius: 50%; background: #8b5cf6;
       animation: pulse-dot 2s ease-in-out infinite;
     }
     @keyframes pulse-dot {
       0%, 100% { opacity: 1; transform: scale(1); }
       50%       { opacity: 0.4; transform: scale(0.7); }
     }
-
-    /* Countdown timer */
-    .quota-countdown {
-      display: flex; justify-content: center; gap: 10px;
-      margin-bottom: 20px;
-    }
+    .quota-countdown { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
     .countdown-block {
       display: flex; flex-direction: column; align-items: center;
-      background: rgba(139,92,246,0.1);
-      border: 1px solid rgba(139,92,246,0.2);
+      background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.2);
       border-radius: 10px; padding: 8px 14px; min-width: 52px;
     }
     .countdown-num {
@@ -272,14 +251,11 @@
       font-weight: 700; color: #c4b5fd; line-height: 1;
     }
     .countdown-label {
-      font-size: 0.55rem; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.1em;
-      color: var(--muted); margin-top: 3px;
+      font-size: 0.55rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--muted); margin-top: 3px;
     }
-
     .quota-tip {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
       border-radius: 10px; padding: 10px 14px;
       font-size: 0.75rem; color: var(--muted);
       line-height: 1.55; text-align: left;
@@ -297,21 +273,15 @@
     /* ══ PAYSLIP SUMMARY MODAL ══ */
     .modal-overlay {
       position: fixed; inset: 0;
-      background: rgba(0,0,0,0.65);
-      backdrop-filter: blur(8px);
-      z-index: 300;
-      display: flex; align-items: flex-end; justify-content: center;
-      padding: 0;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.25s;
+      background: rgba(0,0,0,0.65); backdrop-filter: blur(8px);
+      z-index: 300; display: flex; align-items: flex-end; justify-content: center;
+      padding: 0; opacity: 0; pointer-events: none; transition: opacity 0.25s;
     }
     .modal-overlay.open { opacity: 1; pointer-events: all; }
     .modal {
       width: 100%; max-width: 480px;
-      background: #0d2148;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px 20px 0 0;
-      overflow: hidden;
+      background: #0d2148; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px 20px 0 0; overflow: hidden;
       box-shadow: 0 -8px 48px rgba(0,0,0,0.5);
       transform: translateY(100%);
       transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
@@ -319,45 +289,32 @@
     }
     .modal-overlay.open .modal { transform: translateY(0); }
     .modal::before {
-      content: '';
-      display: block;
-      width: 36px; height: 4px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 2px;
-      margin: 10px auto 0;
-      flex-shrink: 0;
+      content: ''; display: block; width: 36px; height: 4px;
+      background: rgba(255,255,255,0.2); border-radius: 2px;
+      margin: 10px auto 0; flex-shrink: 0;
     }
     @media (min-width: 560px) {
       .modal-overlay { align-items: center; padding: 20px; }
-      .modal {
-        border-radius: 20px;
-        transform: translateY(24px) scale(0.96);
-        box-shadow: 0 24px 64px rgba(0,0,0,0.6);
-        max-height: 88vh;
-      }
+      .modal { border-radius: 20px; transform: translateY(24px) scale(0.96); box-shadow: 0 24px 64px rgba(0,0,0,0.6); max-height: 88vh; }
       .modal::before { display: none; }
       .modal-overlay.open .modal { transform: translateY(0) scale(1); }
     }
     .modal-header {
       background: linear-gradient(135deg, #3b82f6, #06b6d4);
-      padding: 18px 20px;
-      display: flex; align-items: center; justify-content: space-between;
-      flex-shrink: 0;
+      padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
     }
     .modal-header-left { display: flex; flex-direction: column; gap: 2px; }
     .modal-header-icon {
       width: 36px; height: 36px; border-radius: 10px;
       background: rgba(255,255,255,0.2);
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 8px;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 8px;
     }
     .modal-header-icon svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     .modal-title { font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700; color: #fff; }
     .modal-title-sub { font-size: 0.7rem; color: rgba(255,255,255,0.75); }
     .modal-close {
-      background: rgba(255,255,255,0.2); border: none;
-      border-radius: 50%; width: 30px; height: 30px;
-      color: #fff; font-size: 1rem; cursor: pointer;
+      background: rgba(255,255,255,0.2); border: none; border-radius: 50%;
+      width: 30px; height: 30px; color: #fff; font-size: 1rem; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: background 0.2s; flex-shrink: 0; align-self: flex-start;
     }
@@ -365,14 +322,12 @@
     .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
 
     .payslip-loading {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
       padding: 40px 20px; gap: 14px;
     }
     .spinner {
       width: 36px; height: 36px; border-radius: 50%;
-      border: 3px solid rgba(59,130,246,0.2);
-      border-top-color: var(--accent);
+      border: 3px solid rgba(59,130,246,0.2); border-top-color: var(--accent);
       animation: spin 0.8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -380,27 +335,20 @@
 
     .payslip-empty { text-align: center; padding: 40px 20px; }
     .payslip-empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
-    .payslip-empty-title {
-      font-family: 'Sora', sans-serif; font-size: 0.9rem;
-      font-weight: 700; color: #fff; margin-bottom: 6px;
-    }
+    .payslip-empty-title { font-family: 'Sora', sans-serif; font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
     .payslip-empty-sub { font-size: 0.78rem; color: var(--muted); line-height: 1.55; }
 
     .payslip-list { display: flex; flex-direction: column; gap: 0; }
     .payslip-list-header {
-      display: grid; grid-template-columns: 1fr auto;
-      padding: 8px 12px 10px;
-      font-size: 0.62rem; font-weight: 600;
-      color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
-      margin-bottom: 4px;
+      display: grid; grid-template-columns: 1fr auto; padding: 8px 12px 10px;
+      font-size: 0.62rem; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.12em;
+      border-bottom: 1px solid rgba(255,255,255,0.07); margin-bottom: 4px;
     }
     .payslip-item {
       display: grid; grid-template-columns: 1fr auto;
-      align-items: center; gap: 12px;
-      padding: 13px 12px;
-      border-radius: 10px;
-      transition: background 0.15s;
+      align-items: center; gap: 12px; padding: 13px 12px;
+      border-radius: 10px; transition: background 0.15s;
       border-bottom: 1px solid rgba(255,255,255,0.04);
     }
     .payslip-item:last-child { border-bottom: none; }
@@ -411,87 +359,53 @@
     }
     .payslip-period-dot {
       width: 6px; height: 6px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent2)); flex-shrink: 0;
     }
     .view-btn {
-      background: rgba(59,130,246,0.15);
-      border: 1px solid rgba(59,130,246,0.3);
-      color: var(--accent);
-      font-family: 'Sora', sans-serif;
-      font-size: 0.7rem; font-weight: 600;
-      padding: 6px 14px; border-radius: 6px;
-      cursor: pointer; transition: all 0.2s;
-      letter-spacing: 0.04em; text-transform: uppercase;
-      white-space: nowrap;
+      background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3);
+      color: var(--accent); font-family: 'Sora', sans-serif;
+      font-size: 0.7rem; font-weight: 600; padding: 6px 14px; border-radius: 6px;
+      cursor: pointer; transition: all 0.2s; letter-spacing: 0.04em;
+      text-transform: uppercase; white-space: nowrap;
     }
-    .view-btn:hover {
-      background: rgba(59,130,246,0.3);
-      border-color: var(--accent);
-      box-shadow: 0 0 12px rgba(59,130,246,0.3);
-    }
-
-    /* Load more button */
+    .view-btn:hover { background: rgba(59,130,246,0.3); border-color: var(--accent); box-shadow: 0 0 12px rgba(59,130,246,0.3); }
     .load-more-btn {
       width: 100%; margin-top: 10px;
-      background: rgba(59,130,246,0.08);
-      border: 1px solid rgba(59,130,246,0.2);
+      background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2);
       border-radius: 10px; padding: 11px;
       font-size: 0.78rem; font-family: 'Sora', sans-serif;
-      font-weight: 600; color: var(--accent);
-      cursor: pointer; transition: all 0.2s;
-      letter-spacing: 0.02em;
+      font-weight: 600; color: var(--accent); cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em;
     }
     .load-more-btn:hover { background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.4); }
     .load-more-count { opacity: 0.65; }
 
     /* ══ FULL PAYSLIP VIEWER MODAL ══ */
     #payslipViewModal { z-index: 400; align-items: flex-end; padding: 0; }
-    .payslip-view-modal {
-      max-width: 100%; height: 100%; max-height: 100vh;
-      border-radius: 0; transform: translateY(100%);
-    }
+    .payslip-view-modal { max-width: 100%; height: 100%; max-height: 100vh; border-radius: 0; transform: translateY(100%); }
     .payslip-view-modal::before { display: none; }
     #payslipViewModal.open .payslip-view-modal { transform: translateY(0); }
     @media (min-width: 560px) {
       #payslipViewModal { align-items: center; padding: 20px; }
-      .payslip-view-modal {
-        max-width: 560px; height: auto; max-height: 92vh;
-        border-radius: 20px; transform: translateY(24px) scale(0.96);
-      }
+      .payslip-view-modal { max-width: 560px; height: auto; max-height: 92vh; border-radius: 20px; transform: translateY(24px) scale(0.96); }
       #payslipViewModal.open .payslip-view-modal { transform: translateY(0) scale(1); }
     }
     .payslip-view-header {
-      background: #0b1d3a;
-      border-bottom: 1px solid rgba(59,130,246,0.25);
-      padding: 12px 14px;
-      display: flex; align-items: center; gap: 10px;
+      background: #0b1d3a; border-bottom: 1px solid rgba(59,130,246,0.25);
+      padding: 12px 14px; display: flex; align-items: center; gap: 10px;
       flex-shrink: 0; flex-wrap: nowrap;
     }
     .payslip-view-header-left { flex: 1; min-width: 0; }
-    .payslip-view-title {
-      font-family: 'Sora', sans-serif; font-size: 0.82rem;
-      font-weight: 700; color: #fff;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .payslip-view-subtitle {
-      font-size: 0.65rem; color: var(--muted); margin-top: 1px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
+    .payslip-view-title { font-family: 'Sora', sans-serif; font-size: 0.82rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .payslip-view-subtitle { font-size: 0.65rem; color: var(--muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .payslip-view-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     .screenshot-tip {
-      font-size: 0.6rem; color: var(--accent);
-      background: rgba(59,130,246,0.1);
-      border: 1px solid rgba(59,130,246,0.25);
-      border-radius: 6px; padding: 4px 8px;
+      font-size: 0.6rem; color: var(--accent); background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.25); border-radius: 6px; padding: 4px 8px;
       display: none; align-items: center; gap: 4px; white-space: nowrap;
     }
     .screenshot-tip svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 2; flex-shrink: 0; }
     @media (min-width: 400px) { .screenshot-tip { display: flex; } }
-    .payslip-view-body {
-      padding: 12px; overflow-y: auto; flex: 1;
-      background: #f0f2f5; -webkit-overflow-scrolling: touch;
-    }
+    .payslip-view-body { padding: 12px; overflow-y: auto; flex: 1; background: #f0f2f5; -webkit-overflow-scrolling: touch; }
     .payslip-image-wrap { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.12); }
     .payslip-image-wrap img { width: 100%; display: block; border-radius: 8px; touch-action: pinch-zoom; }
     .payslip-table-wrap { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.15); font-family: 'DM Sans', sans-serif; }
@@ -508,17 +422,14 @@
     .payslip-total-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; margin-top: 12px; background: #0b1d3a; border-radius: 8px; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 0.88rem; color: #fff; }
     .payslip-net-pay { color: #10b981; }
     .download-btn {
-      background: linear-gradient(135deg, #10b981, #059669);
-      border: none; color: #fff;
+      background: linear-gradient(135deg, #10b981, #059669); border: none; color: #fff;
       font-family: 'Sora', sans-serif; font-size: 0.7rem; font-weight: 700;
-      padding: 7px 14px; border-radius: 7px;
-      cursor: pointer; transition: all 0.2s;
+      padding: 7px 14px; border-radius: 7px; cursor: pointer; transition: all 0.2s;
       display: none; align-items: center; gap: 5px;
       letter-spacing: 0.04em; text-transform: uppercase;
       box-shadow: 0 3px 12px rgba(16,185,129,0.4); white-space: nowrap;
     }
     .download-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(16,185,129,0.55); }
-    .download-btn:active { transform: translateY(0); }
     .download-btn svg { width: 13px; height: 13px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
     /* ══ HELP MODAL ══ */
@@ -527,33 +438,28 @@
     .help-btn {
       position: fixed; bottom: 24px; right: 24px;
       width: 40px; height: 40px; border-radius: 50%;
-      background: rgba(59,130,246,0.15);
-      border: 1.5px solid rgba(59,130,246,0.4);
-      color: var(--accent); font-family: 'Sora', sans-serif;
-      font-size: 1.05rem; font-weight: 700;
+      background: rgba(59,130,246,0.15); border: 1.5px solid rgba(59,130,246,0.4);
+      color: var(--accent); font-family: 'Sora', sans-serif; font-size: 1.05rem; font-weight: 700;
       cursor: pointer; display: flex; align-items: center; justify-content: center;
       transition: all 0.2s; backdrop-filter: blur(8px); z-index: 100;
       box-shadow: 0 4px 16px rgba(59,130,246,0.2);
     }
-    .help-btn:hover { background: rgba(59,130,246,0.3); box-shadow: 0 0 20px rgba(59,130,246,0.45); transform: scale(1.1); }
+    .help-btn:hover { background: rgba(59,130,246,0.3); box-shadow: 0 0 20px rgba(59,130,246,0.45)); transform: scale(1.1); }
     .modal-body-help { padding: 20px; display: flex; flex-direction: column; gap: 0; overflow-y: auto; }
     .step { display: flex; gap: 14px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
     .step:last-child { border-bottom: none; }
     .step-num {
       min-width: 26px; height: 26px; border-radius: 50%;
-      background: linear-gradient(135deg, #3b82f6, #06b6d4);
-      color: #fff; font-family: 'Sora', sans-serif;
-      font-size: 0.72rem; font-weight: 700;
+      background: linear-gradient(135deg, #3b82f6, #06b6d4); color: #fff;
+      font-family: 'Sora', sans-serif; font-size: 0.72rem; font-weight: 700;
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; margin-top: 1px;
-      box-shadow: 0 2px 8px rgba(59,130,246,0.4);
+      flex-shrink: 0; margin-top: 1px; box-shadow: 0 2px 8px rgba(59,130,246,0.4);
     }
     .step-text strong { display: block; font-size: 0.8rem; font-weight: 600; color: #e2eaf6; margin-bottom: 3px; font-family: 'Sora', sans-serif; }
     .step-text p { font-size: 0.75rem; color: #6b88ad; line-height: 1.55; margin: 0; }
     .bi { display: inline-block; border-radius: 8px; padding: 1px 7px; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; vertical-align: middle; }
     .bi-v { background: rgba(16,185,129,0.15); color: #10b981; }
     .bi-b { background: rgba(245,158,11,0.15); color: #f59e0b; }
-    .bi-n { background: rgba(239,68,68,0.12); color: #f87171; }
 
     @keyframes slideDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
     @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
@@ -589,8 +495,8 @@
   <div class="search-card">
     <div class="input-label">Your email address</div>
     <div class="input-row">
-      <input class="email-input" type="text" id="emailInput" placeholder="e.g. johndoe@gmail.com" />
-      <button class="check-btn" onclick="checkEmail()">Check</button>
+      <input class="email-input" type="email" id="emailInput" placeholder="e.g. johndoe@gmail.com" autocomplete="email" autocapitalize="none" spellcheck="false" />
+      <button class="check-btn" id="checkBtn" onclick="checkEmail()">Check</button>
     </div>
   </div>
 
@@ -633,7 +539,6 @@
     </div>
   </div>
 
-  <!-- ══ QUOTA / COME BACK TOMORROW CARD ══ -->
   <div class="quota-card" id="quotaCard">
     <div class="quota-inner">
       <div class="quota-illustration">
@@ -730,49 +635,49 @@
         <div class="step-num">1</div>
         <div class="step-text">
           <strong>I-type ang iyong personal na email / Type your personal email</strong>
-          <p>Ilagay ang iyong email address sa kahon, hal. <em style="color:#3b82f6">johndoe@gmail.com</em><br>Enter your email address in the input box.</p>
+          <p>Ilagay ang iyong email address sa kahon, hal. <em style="color:#3b82f6">johndoe@gmail.com</em></p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
         <div class="step-text">
           <strong>Suriin ang status / Check the status</strong>
-          <p>Kapag lumabas ang <span class="bi bi-v">Verified</span> — okay na! Ibig sabihin, tugma ang email mo sa system.<br>If it shows <span class="bi bi-v">Verified</span> — your email is registered and you can view payslips.</p>
+          <p>Kapag lumabas ang <span class="bi bi-v">Verified</span> — okay na! Tugma ang email mo sa system.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <div class="step-text">
-          <strong>I-click ang "View My Payslips" / Click "View My Payslips"</strong>
-          <p>Kapag <span class="bi bi-v">Verified</span> ang status mo, lalabas ang button na "View My Payslips". I-click ito para makita ang listahan ng iyong mga payslip.</p>
+          <strong>I-click ang "View My Payslips"</strong>
+          <p>Kapag <span class="bi bi-v">Verified</span> ang status mo, i-click ang button para makita ang listahan ng iyong mga payslip.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">4</div>
         <div class="step-text">
           <strong>Tingnan ang buong payslip / View full payslip</strong>
-          <p>Sa Payslip Summary, i-click ang <strong style="color:#3b82f6">View</strong> sa tabi ng date period para makita ang detalye ng iyong payslip.</p>
+          <p>Sa Payslip Summary, i-click ang <strong style="color:#3b82f6">View</strong> sa tabi ng date period.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">5</div>
         <div class="step-text">
-          <strong>I-screenshot ang payslip / Screenshot your payslip</strong>
-          <p>Pinakamadaling paraan para mapanatili ang kopya ay ang mag-screenshot. Gamitin ang screenshot function ng iyong phone o computer.</p>
+          <strong>I-screenshot / Take a screenshot</strong>
+          <p>Pinakamadaling paraan para mapanatili ang kopya ay ang mag-screenshot ng iyong payslip.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">6</div>
         <div class="step-text">
-          <strong>Kapag Bounce Email / If Bounce Email</strong>
+          <strong>Kapag Bounce Email</strong>
           <p>Kapag <span class="bi bi-b">Bounce Email</span> ang lumabas, kausapin ang iyong inspector agad para ma-update ang email.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">7</div>
         <div class="step-text">
-          <strong>Gumamit ng maliliit na letra / Use lowercase letters</strong>
-          <p>Laging gumamit ng lowercase. Hal. <em style="color:#3b82f6">johndoe@gmail.com</em> hindi <em style="color:#f87171">JohnDoe@Gmail.com</em></p>
+          <strong>Gumamit ng maliliit na letra / Use lowercase</strong>
+          <p>Laging lowercase. Hal. <em style="color:#3b82f6">johndoe@gmail.com</em> hindi <em style="color:#f87171">JohnDoe@Gmail.com</em></p>
         </div>
       </div>
     </div>
@@ -782,8 +687,8 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
-  getFirestore, collection, query, where, getDocs,
-  getDoc, doc, orderBy, limit
+  getFirestore, collection, query,
+  getDoc, getDocs, doc, orderBy, limit
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -797,12 +702,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
-// ── Cache config ──
-const CACHE_TTL_MS = 30 * 60 * 1000; // 30 min
-const PAGE_SIZE    = 6;
+// ── Config ──
+const CACHE_TTL_MS   = 30 * 60 * 1000; // 30 min — survives tab close, 0 reads on repeat
+const PAGE_SIZE      = 6;
 
+// ── sessionStorage — short-lived, payslip image data per session ──
 function ssGet(key)      { try { return JSON.parse(sessionStorage.getItem(key)); } catch { return null; } }
 function ssSet(key, val) { try { sessionStorage.setItem(key, JSON.stringify(val)); } catch {} }
+
+// ── localStorage — 30-min TTL for employee + payslip list ──
 function lsGet(key) {
   try {
     const item = JSON.parse(localStorage.getItem(key));
@@ -816,7 +724,7 @@ function lsSet(key, val) {
 }
 
 // ── State ──
-let currentEmployeeDocId = null;
+let currentEmployeeDocId = null;  // = email (the doc ID)
 let currentEmployeeName  = null;
 let currentPayslipSrc    = null;
 let currentPayslipPeriod = null;
@@ -830,8 +738,12 @@ function escapeHtml(str) {
     .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
     .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 }
+// Safe attr escape — used inside onclick='...' string interpolation
 function escapeAttr(str) {
-  return String(str).replace(/'/g,"\\'").replace(/"/g,"&quot;");
+  return String(str)
+    .replace(/\\/g,"\\\\")
+    .replace(/'/g,"\\'")
+    .replace(/"/g,"&quot;");
 }
 function formatCurrency(val) {
   const n = parseFloat(val);
@@ -839,109 +751,126 @@ function formatCurrency(val) {
   return n.toLocaleString("en-PH", { minimumFractionDigits:2, maximumFractionDigits:2 });
 }
 
+function setCheckBtnLoading(loading) {
+  const btn = document.getElementById("checkBtn");
+  if (!btn) return;
+  btn.disabled = loading;
+  btn.textContent = loading ? "…" : "Check";
+}
+
 function hideAll() {
-  ["resultCard","notFoundCard","invalidCard","lowercaseCard","quotaCard"].forEach(id =>
+  ["resultCard","notFoundCard","invalidCard","lowercaseCard"].forEach(id =>
     document.getElementById(id).classList.remove("visible")
   );
-  document.getElementById("quotaCard").style.display = "none";
+  const qc = document.getElementById("quotaCard");
+  qc.style.display  = "none";
+  qc.classList.remove("visible");
   document.getElementById("footerNote").style.display = "none";
   if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
 }
 
-// ── Quota / Resource-exhausted error handler ──
 function isQuotaError(err) {
   const code = err?.code || "";
   const msg  = (err?.message || "").toLowerCase();
   return code === "resource-exhausted"
-    || msg.includes("quota")
-    || msg.includes("resource-exhausted")
-    || msg.includes("429");
+    || msg.includes("quota") || msg.includes("resource-exhausted") || msg.includes("429");
 }
 
 function showQuotaCard() {
   hideAll();
   const card = document.getElementById("quotaCard");
   card.style.display = "block";
-  card.classList.add("visible");
+  requestAnimationFrame(() => card.classList.add("visible"));
   startCountdown();
 }
 
-// Countdown to next midnight Pacific Time (Firestore resets at midnight PT)
 function startCountdown() {
   function tick() {
-    // Midnight Pacific = UTC-7 (PDT) or UTC-8 (PST) — use UTC-7 conservatively
-    const now       = new Date();
-    const utcMs     = now.getTime() + now.getTimezoneOffset() * 60000;
-    const ptMs      = utcMs - 7 * 3600000; // Pacific time ms
-    const ptNow     = new Date(ptMs);
-    const ptMidnight = new Date(ptNow);
-    ptMidnight.setHours(24, 0, 0, 0); // next midnight PT
-
-    const diff = ptMidnight - ptNow;
-    if (diff <= 0) {
-      // Reset happened — reload page
-      location.reload();
-      return;
-    }
-
-    const h  = Math.floor(diff / 3600000);
-    const m  = Math.floor((diff % 3600000) / 60000);
-    const s  = Math.floor((diff % 60000) / 1000);
+    const now   = new Date();
+    // Philippine Time = UTC+8
+    const phNow = new Date(now.getTime() + (8 * 60 - now.getTimezoneOffset()) * 60000);
+    const phMid = new Date(phNow);
+    phMid.setHours(24, 0, 0, 0);
+    const diff = phMid - phNow;
+    if (diff <= 0) { location.reload(); return; }
+    const h   = Math.floor(diff / 3600000);
+    const m   = Math.floor((diff % 3600000) / 60000);
+    const s   = Math.floor((diff % 60000) / 1000);
     const pad = n => String(n).padStart(2, "0");
-
-    document.getElementById("cdHours").textContent = pad(h);
-    document.getElementById("cdMins").textContent  = pad(m);
-    document.getElementById("cdSecs").textContent  = pad(s);
+    document.getElementById("cdHours").textContent       = pad(h);
+    document.getElementById("cdMins").textContent        = pad(m);
+    document.getElementById("cdSecs").textContent        = pad(s);
     document.getElementById("resetCountdown").textContent = `${pad(h)}h ${pad(m)}m ${pad(s)}s`;
   }
   tick();
   countdownTimer = setInterval(tick, 1000);
 }
 
-// ════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  1. EMAIL CHECK
-// ════════════════════════════════════════════════
+//     • email IS the document ID → 1 read (getDoc), never a query
+//     • localStorage 30-min cache → 0 reads on repeat visits
+// ════════════════════════════════════════════════════════
 window.checkEmail = async function () {
   const raw = document.getElementById("emailInput").value.trim();
   hideAll();
   currentEmployeeDocId = null;
   currentEmployeeName  = null;
 
+  // Basic format check
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(raw)) {
-    document.getElementById("invalidCard").classList.add("visible"); return;
+    document.getElementById("invalidCard").classList.add("visible");
+    return;
   }
+  // Uppercase guard
   if (raw !== raw.toLowerCase()) {
-    document.getElementById("lowercaseCard").classList.add("visible"); return;
+    document.getElementById("lowercaseCard").classList.add("visible");
+    return;
   }
 
   const email    = raw.toLowerCase();
-  const cacheKey = `emp_lookup_${email}`;
-  let empData    = ssGet(cacheKey);
+  const cacheKey = `emp_v3_${email}`;   // bump version if schema changes
+
+  // ── Serve from cache if fresh (0 Firestore reads) ──
+  let empData = lsGet(cacheKey);
 
   if (!empData) {
+    setCheckBtnLoading(true);
     try {
-      const q    = query(collection(db, "employees"), where("Email", "==", email));
-      const snap = await getDocs(q);
-      if (snap.empty) {
-        document.getElementById("notFoundCard").classList.add("visible"); return;
+      // ✅ 1 READ ONLY — email is the doc ID, no query needed
+      const snap = await getDoc(doc(db, "employees", email));
+
+      if (!snap.exists()) {
+        document.getElementById("notFoundCard").classList.add("visible");
+        return;
       }
-      snap.forEach(d => { empData = { id: d.id, ...d.data() }; });
-      ssSet(cacheKey, empData);
+
+      empData = { id: snap.id, ...snap.data() };
+      lsSet(cacheKey, empData);           // cache → 0 reads for 30 min
     } catch (err) {
+      console.error("checkEmail error:", err);
       if (isQuotaError(err)) { showQuotaCard(); return; }
-      document.getElementById("notFoundCard").classList.add("visible"); return;
+      document.getElementById("notFoundCard").classList.add("visible");
+      return;
+    } finally {
+      setCheckBtnLoading(false);
     }
   }
 
-  if (!empData) { document.getElementById("notFoundCard").classList.add("visible"); return; }
+  if (!empData) {
+    document.getElementById("notFoundCard").classList.add("visible");
+    return;
+  }
 
-  currentEmployeeDocId = empData.id;
+  // ── Populate result card ──
+  currentEmployeeDocId = empData.id;          // = the email string
   currentEmployeeName  = empData.Name || "Employee";
 
   const status = (empData.Status || "").trim().toUpperCase();
+
   document.getElementById("resName").textContent    = empData.Name    || "N/A";
-  document.getElementById("resEmail").textContent   = empData.Email   || "N/A";
+  document.getElementById("resEmail").textContent   = empData.Email   || empData.id || "N/A";
   document.getElementById("resAgency").textContent  = empData.Agency  || "N/A";
   document.getElementById("resPosting").textContent = empData.Posting || "N/A";
 
@@ -954,13 +883,22 @@ window.checkEmail = async function () {
     badgeHtml = `<span class="info-value">${escapeHtml(empData.Status || "N/A")}</span>`;
   }
   document.getElementById("resStatus").innerHTML = badgeHtml;
+
+  // Only show "View My Payslips" for VERIFIED employees
+  document.getElementById("viewPayslipBtn").style.display =
+    status === "VERIFIED" ? "flex" : "none";
+
   document.getElementById("resultCard").classList.add("visible");
   document.getElementById("footerNote").style.display = "block";
 };
 
-// ════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  2. PAYSLIP LIST
-// ════════════════════════════════════════════════
+//     • subcollection path: employees/{email}/payslips
+//     • orderBy createdAt desc — requires a Firestore index
+//       (see README below for how to create it)
+//     • falls back to unordered getDocs if index missing
+// ════════════════════════════════════════════════════════
 window.openPayslipSummary = async function () {
   if (!currentEmployeeDocId) return;
 
@@ -972,23 +910,27 @@ window.openPayslipSummary = async function () {
     </div>`;
   document.getElementById("payslipSummaryModal").classList.add("open");
 
-  const listCacheKey = `payslip_list_${currentEmployeeDocId}`;
-  let cachedList     = lsGet(listCacheKey);
+  const listCacheKey = `payslip_list_v3_${currentEmployeeDocId}`;
+  const cachedList   = lsGet(listCacheKey);
 
   if (cachedList) {
     allPayslipMeta = cachedList;
-    shownCount = 0;
+    shownCount     = 0;
     renderPayslipList();
     return;
   }
 
   try {
+    // ✅ subcollection uses email as parent doc ID — correct path
     const payslipsRef = collection(db, "employees", currentEmployeeDocId, "payslips");
     let snap;
     try {
-      const q = query(payslipsRef, orderBy("createdAt", "desc"), limit(10));
+      // Ordered query (needs a Firestore index on createdAt DESC)
+      const q = query(payslipsRef, orderBy("createdAt", "desc"), limit(50));
       snap = await getDocs(q);
-    } catch {
+    } catch (indexErr) {
+      // Fallback: unordered fetch (no index required)
+      console.warn("Index not found, falling back to unordered fetch:", indexErr.message);
       snap = await getDocs(payslipsRef);
     }
 
@@ -1005,13 +947,18 @@ window.openPayslipSummary = async function () {
     allPayslipMeta = [];
     snap.forEach(d => {
       const data = d.data();
-      allPayslipMeta.push({ id: d.id, period: data.period || data.datePeriod || data.label || d.id });
+      allPayslipMeta.push({
+        id:     d.id,
+        period: data.period || data.datePeriod || data.label || d.id
+      });
     });
+
     lsSet(listCacheKey, allPayslipMeta);
     shownCount = 0;
     renderPayslipList();
 
   } catch (err) {
+    console.error("openPayslipSummary error:", err);
     if (isQuotaError(err)) {
       document.getElementById("payslipSummaryModal").classList.remove("open");
       showQuotaCard();
@@ -1026,15 +973,16 @@ window.openPayslipSummary = async function () {
   }
 };
 
-// ════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  3. PAGINATION
-// ════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 function renderPayslipList() {
   const total   = allPayslipMeta.length;
   const newPage = allPayslipMeta.slice(shownCount, shownCount + PAGE_SIZE);
   shownCount   += newPage.length;
 
   if (shownCount === newPage.length) {
+    // First render — build skeleton
     let html = `<div class="payslip-list">
       <div class="payslip-list-header"><span>Date Period</span><span>Payslip</span></div>
       <div id="payslipRows"></div>`;
@@ -1057,23 +1005,30 @@ function renderPayslipList() {
           <span class="payslip-period-dot"></span>
           ${escapeHtml(item.period)}
         </span>
-        <button class="view-btn" onclick="openFullPayslip('${escapeAttr(currentEmployeeDocId)}','${escapeAttr(item.id)}','${escapeAttr(item.period)}')">View</button>`;
+        <button class="view-btn"
+          onclick="openFullPayslip('${escapeAttr(currentEmployeeDocId)}','${escapeAttr(item.id)}','${escapeAttr(item.period)}')">
+          View
+        </button>`;
       rowsEl.appendChild(div);
     });
   }
 
   const btn = document.getElementById("loadMoreBtn");
   if (btn) {
-    if (shownCount >= total) { btn.remove(); }
-    else { btn.innerHTML = `Load more <span class="load-more-count">(${total - shownCount} remaining)</span>`; }
+    if (shownCount >= total) {
+      btn.remove();
+    } else {
+      btn.innerHTML = `Load more <span class="load-more-count">(${total - shownCount} remaining)</span>`;
+    }
   }
 }
 
 window.loadMorePayslips = function () { renderPayslipList(); };
 
-// ════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  4. FULL PAYSLIP VIEW
-// ════════════════════════════════════════════════
+//     • 1 read per payslip, cached in sessionStorage for the session
+// ════════════════════════════════════════════════════════
 window.openFullPayslip = async function (empId, payslipId, period) {
   currentPayslipSrc    = null;
   currentPayslipPeriod = period;
@@ -1087,11 +1042,13 @@ window.openFullPayslip = async function (empId, payslipId, period) {
     </div>`;
   document.getElementById("payslipViewModal").classList.add("open");
 
+  // sessionStorage cache — per-session, clears on tab close (good for privacy)
   const imgCacheKey = `payslip_img_${empId}_${payslipId}`;
-  let cachedData    = ssGet(imgCacheKey);
+  let   cachedData  = ssGet(imgCacheKey);
 
   if (!cachedData) {
     try {
+      // ✅ 1 READ — direct doc lookup
       const snap = await getDoc(doc(db, "employees", empId, "payslips", payslipId));
       if (!snap.exists()) {
         document.getElementById("payslipViewBody").innerHTML = `
@@ -1104,6 +1061,7 @@ window.openFullPayslip = async function (empId, payslipId, period) {
       cachedData = snap.data();
       ssSet(imgCacheKey, cachedData);
     } catch (err) {
+      console.error("openFullPayslip error:", err);
       if (isQuotaError(err)) {
         document.getElementById("payslipViewModal").classList.remove("open");
         showQuotaCard();
@@ -1141,26 +1099,35 @@ function renderPayslip(data, period) {
     document.getElementById("downloadPayslipBtn").style.display = "flex";
     return;
   }
+
+  // Fallback: structured text render
   document.getElementById("downloadPayslipBtn").style.display = "none";
   let html = `<div class="payslip-table-wrap">
     <div class="payslip-doc-header">
       <div class="payslip-doc-title">PAYSLIP</div>
       <div class="payslip-doc-meta">${escapeHtml(period)} &nbsp;|&nbsp; ${escapeHtml(currentEmployeeName || "Employee")}</div>
     </div><div class="payslip-doc-body">`;
+
   const infoFields  = ["agency","posting","payslipNo","date"];
   const fieldLabels = { agency:"Agency", posting:"Posting", payslipNo:"Payslip No.", date:"Date" };
   if (infoFields.some(f => data[f])) {
     html += `<div class="payslip-section-label">Details</div>`;
-    infoFields.forEach(f => { if (data[f]) html += `<div class="payslip-row"><span class="payslip-row-label">${fieldLabels[f]}</span><span class="payslip-row-value">${escapeHtml(String(data[f]))}</span></div>`; });
+    infoFields.forEach(f => {
+      if (data[f]) html += `<div class="payslip-row"><span class="payslip-row-label">${fieldLabels[f]}</span><span class="payslip-row-value">${escapeHtml(String(data[f]))}</span></div>`;
+    });
   }
   const gross = data.grossIncome || data.earnings || data.income;
   if (gross && typeof gross === "object") {
     html += `<div class="payslip-section-label">Gross Income</div>`;
-    Object.entries(gross).forEach(([k,v]) => { html += `<div class="payslip-row"><span class="payslip-row-label">${escapeHtml(k)}</span><span class="payslip-row-value">${formatCurrency(v)}</span></div>`; });
+    Object.entries(gross).forEach(([k,v]) => {
+      html += `<div class="payslip-row"><span class="payslip-row-label">${escapeHtml(k)}</span><span class="payslip-row-value">${formatCurrency(v)}</span></div>`;
+    });
   }
   if (data.deductions && typeof data.deductions === "object") {
     html += `<div class="payslip-section-label">Deductions</div>`;
-    Object.entries(data.deductions).forEach(([k,v]) => { html += `<div class="payslip-row"><span class="payslip-row-label">${escapeHtml(k)}</span><span class="payslip-row-value">${formatCurrency(v)}</span></div>`; });
+    Object.entries(data.deductions).forEach(([k,v]) => {
+      html += `<div class="payslip-row"><span class="payslip-row-label">${escapeHtml(k)}</span><span class="payslip-row-value">${formatCurrency(v)}</span></div>`;
+    });
   }
   const netPay = data.netPay || data.net || data.netAmount;
   if (netPay) html += `<div class="payslip-total-row"><span>NET PAY</span><span class="payslip-net-pay">${formatCurrency(netPay)}</span></div>`;
@@ -1168,22 +1135,54 @@ function renderPayslip(data, period) {
   document.getElementById("payslipViewBody").innerHTML = html;
 }
 
-// ── Download ──
 window.downloadPayslip = function () {
   if (!currentPayslipSrc) return;
   const a    = document.createElement("a");
   a.href     = currentPayslipSrc;
-  const safe = (currentPayslipPeriod || "payslip").replace(/[^a-zA-Z0-9\-_. ]/g,"").trim().replace(/\s+/g,"_");
+  const safe = (currentPayslipPeriod || "payslip")
+    .replace(/[^a-zA-Z0-9\-_. ]/g,"").trim().replace(/\s+/g,"_");
   a.download = `Payslip_${safe}.png`;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 };
 
-window.closePayslipSummary = function () { document.getElementById("payslipSummaryModal").classList.remove("open"); };
-window.closePayslipView    = function () { document.getElementById("payslipViewModal").classList.remove("open"); };
+window.closePayslipSummary = function () {
+  document.getElementById("payslipSummaryModal").classList.remove("open");
+};
+window.closePayslipView = function () {
+  document.getElementById("payslipViewModal").classList.remove("open");
+};
 
+// Enter key support
 document.getElementById("emailInput").addEventListener("keydown", e => {
   if (e.key === "Enter") window.checkEmail();
 });
+
+// Auto-lowercase the input as the user types (prevents confusion)
+document.getElementById("emailInput").addEventListener("input", function() {
+  const pos = this.selectionStart;
+  this.value = this.value.toLowerCase();
+  this.setSelectionRange(pos, pos);
+});
 </script>
+
+<!--
+═══════════════════════════════════════════════════════════════
+  FIRESTORE INDEX REQUIRED
+  For orderBy("createdAt","desc") on the payslips subcollection,
+  create this index in your Firebase Console:
+
+  Collection group : payslips
+  Fields           : createdAt  DESC
+  Query scope      : Collection group
+
+  Or paste this URL in your browser to auto-create it:
+  https://console.firebase.google.com/project/email-checker-24db4/firestore/indexes
+
+  If you skip this, the code automatically falls back to
+  unordered getDocs (still works, just not sorted by date).
+═══════════════════════════════════════════════════════════════
+-->
 </body>
 </html>

@@ -57,635 +57,263 @@
     }
 
     .logo-wrap {
-      width: 52px;
-      height: 52px;
-      margin-bottom: 4px;
-      animation: logoFloat 4s ease-in-out infinite, logoSpin 8s linear infinite;
-      transform-style: preserve-3d;
+      width: 52px; height: 52px; margin-bottom: 4px;
+      animation: logoFloat 4s ease-in-out infinite;
     }
-
     @keyframes logoFloat {
-      0%, 100% { transform: translateY(0px) rotateY(0deg); }
-      25%       { transform: translateY(-6px) rotateY(10deg); }
-      50%       { transform: translateY(-10px) rotateY(0deg); }
-      75%       { transform: translateY(-6px) rotateY(-10deg); }
+      0%,100% { transform: translateY(0); filter: drop-shadow(0 4px 12px rgba(74,143,255,0.3)); }
+      50%      { transform: translateY(-8px); filter: drop-shadow(0 8px 20px rgba(74,143,255,0.55)); }
     }
+    .logo-wrap svg { width:100%; height:100%; }
 
-    @keyframes logoSpin {
-      0%   { filter: drop-shadow(0 4px 12px rgba(74,143,255,0.3)); }
-      50%  { filter: drop-shadow(0 8px 20px rgba(74,143,255,0.55)); }
-      100% { filter: drop-shadow(0 4px 12px rgba(74,143,255,0.3)); }
-    }
+    .eyebrow { font-size:11px; font-weight:600; letter-spacing:3px; color:var(--accent); text-transform:uppercase; }
+    .header h1 { font-size:clamp(22px,5vw,30px); font-weight:700; color:#fff; text-align:center; line-height:1.2; }
+    .header h1 span { color:var(--accent); }
+    .header-sub { font-size:13px; color:var(--text2); font-weight:300; }
 
-    .logo-wrap svg { width: 100%; height: 100%; }
-
-    .eyebrow {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 3px;
-      color: var(--accent);
-      text-transform: uppercase;
-    }
-
-    .header h1 {
-      font-size: clamp(22px, 5vw, 30px);
-      font-weight: 700;
-      color: #fff;
-      text-align: center;
-      line-height: 1.2;
-    }
-
-    .header h1 span { color: var(--accent); }
-
-    .header-sub {
-      font-size: 13px;
-      color: var(--text2);
-      font-weight: 300;
-    }
-
-    /* ── Cache status bar ── */
+    /* ── Cache bar ── */
     .cache-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 8px 14px;
-      margin-bottom: 14px;
-      font-size: 11px;
-      color: var(--text3);
-      gap: 8px;
+      display:flex; align-items:center; justify-content:space-between;
+      background:var(--bg3); border:1px solid var(--border);
+      border-radius:10px; padding:8px 14px; margin-bottom:14px;
+      font-size:11px; color:var(--text3); gap:8px;
     }
-
-    .cache-bar-left {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .cache-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--text3);
-      flex-shrink: 0;
-    }
-
-    .cache-dot.live { background: #3dd68c; }
-    .cache-dot.cached { background: var(--accent); }
-
+    .cache-bar-left { display:flex; align-items:center; gap:6px; }
+    .cache-dot { width:6px; height:6px; border-radius:50%; background:var(--text3); flex-shrink:0; }
+    .cache-dot.live { background:#3dd68c; }
+    .cache-dot.cached { background:var(--accent); }
     .btn-refresh {
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 4px 10px;
-      color: var(--text3);
-      font-size: 11px;
-      font-weight: 600;
-      font-family: 'Sora', sans-serif;
-      cursor: pointer;
-      transition: all 0.15s;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      white-space: nowrap;
+      background:none; border:1px solid var(--border); border-radius:7px;
+      padding:4px 10px; color:var(--text3); font-size:11px; font-weight:600;
+      font-family:'Sora',sans-serif; cursor:pointer; transition:all 0.15s;
+      display:flex; align-items:center; gap:4px; white-space:nowrap;
     }
+    .btn-refresh:hover { border-color:var(--border2); color:var(--text2); }
+    .btn-refresh svg { width:11px; height:11px; }
+    .btn-refresh.spinning svg { animation:spin 0.6s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
 
-    .btn-refresh:hover { border-color: var(--border2); color: var(--text2); }
-    .btn-refresh svg { width: 11px; height: 11px; }
-    .btn-refresh.spinning svg { animation: spin 0.6s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .toolbar {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
-    .search-wrap {
-      flex: 1;
-      position: relative;
-    }
-
-    .search-wrap svg {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 16px;
-      height: 16px;
-      color: var(--text3);
-      pointer-events: none;
-    }
-
+    .toolbar { display:flex; gap:10px; margin-bottom:14px; }
+    .search-wrap { flex:1; position:relative; }
+    .search-wrap svg { position:absolute; left:14px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--text3); pointer-events:none; }
     .search-wrap input {
-      width: 100%;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 14px 12px 40px;
-      color: var(--text);
-      font-size: 14px;
-      font-family: 'Sora', sans-serif;
-      outline: none;
-      transition: border-color 0.2s;
+      width:100%; background:var(--bg3); border:1px solid var(--border);
+      border-radius:12px; padding:12px 14px 12px 40px; color:var(--text);
+      font-size:14px; font-family:'Sora',sans-serif; outline:none; transition:border-color 0.2s;
     }
-
-    .search-wrap input:focus { border-color: var(--border2); }
-    .search-wrap input::placeholder { color: var(--text3); }
-
+    .search-wrap input:focus { border-color:var(--border2); }
+    .search-wrap input::placeholder { color:var(--text3); }
     .btn-search {
-      padding: 12px 22px;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      font-family: 'Sora', sans-serif;
-      background: var(--accent);
-      color: #fff;
-      white-space: nowrap;
-      transition: background 0.2s, transform 0.1s;
-      letter-spacing: 0.3px;
+      padding:12px 22px; border-radius:12px; border:none; cursor:pointer;
+      font-size:14px; font-weight:600; font-family:'Sora',sans-serif;
+      background:var(--accent); color:#fff; white-space:nowrap;
+      transition:background 0.2s,transform 0.1s; letter-spacing:0.3px;
     }
+    .btn-search:hover { background:#5a9fff; }
+    .btn-search:active { transform:scale(0.97); }
 
-    .btn-search:hover { background: #5a9fff; }
-    .btn-search:active { transform: scale(0.97); }
-
-    .filter-bar {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 18px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      scrollbar-width: none;
-    }
-    .filter-bar::-webkit-scrollbar { display: none; }
-
+    .filter-bar { display:flex; gap:8px; margin-bottom:18px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none; }
+    .filter-bar::-webkit-scrollbar { display:none; }
     .filter-chip {
-      padding: 6px 16px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      font-family: 'Sora', sans-serif;
-      background: var(--bg3);
-      color: var(--text3);
-      border: 1px solid var(--border);
-      cursor: pointer;
-      white-space: nowrap;
-      flex-shrink: 0;
-      transition: all 0.18s;
-      letter-spacing: 0.5px;
+      padding:6px 16px; border-radius:20px; font-size:12px; font-weight:600;
+      font-family:'Sora',sans-serif; background:var(--bg3); color:var(--text3);
+      border:1px solid var(--border); cursor:pointer; white-space:nowrap;
+      flex-shrink:0; transition:all 0.18s; letter-spacing:0.5px;
     }
+    .filter-chip:hover { color:var(--text2); border-color:var(--border2); }
+    .filter-chip.active { background:rgba(74,143,255,0.15); color:var(--accent); border-color:rgba(74,143,255,0.4); }
 
-    .filter-chip:hover { color: var(--text2); border-color: var(--border2); }
-    .filter-chip.active {
-      background: rgba(74,143,255,0.15);
-      color: var(--accent);
-      border-color: rgba(74,143,255,0.4);
-    }
-
-    .stats-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
-
+    .stats-row { display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap; }
     .stat-pill {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 5px 12px;
-      font-size: 12px;
-      color: var(--text2);
+      display:flex; align-items:center; gap:6px;
+      background:var(--bg3); border:1px solid var(--border);
+      border-radius:20px; padding:5px 12px; font-size:12px; color:var(--text2);
     }
+    .stat-dot { width:7px; height:7px; border-radius:50%; }
 
-    .stat-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-    }
-
-    .emp-list { display: flex; flex-direction: column; gap: 8px; }
-
+    .emp-list { display:flex; flex-direction:column; gap:8px; }
     .emp-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      transition: border-color 0.2s, background 0.2s;
-      animation: fadeIn 0.25s ease both;
+      background:var(--card); border:1px solid var(--border);
+      border-radius:14px; padding:14px 18px;
+      display:flex; align-items:center; gap:14px;
+      transition:border-color 0.2s,background 0.2s;
+      animation:fadeIn 0.25s ease both;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .emp-card:hover {
-      border-color: var(--border2);
-      background: var(--bg3);
-    }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+    .emp-card:hover { border-color:var(--border2); background:var(--bg3); }
 
     .emp-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: rgba(74,143,255,0.12);
-      border: 1px solid rgba(74,143,255,0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--accent);
-      flex-shrink: 0;
-      letter-spacing: 0;
+      width:40px; height:40px; border-radius:12px;
+      background:rgba(74,143,255,0.12); border:1px solid rgba(74,143,255,0.2);
+      display:flex; align-items:center; justify-content:center;
+      font-size:14px; font-weight:700; color:var(--accent); flex-shrink:0;
     }
-
-    .emp-body { flex: 1; min-width: 0; }
-
-    .emp-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: #e8f2ff;
-      margin-bottom: 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .emp-email {
-      font-size: 12px;
-      color: var(--text2);
-      word-break: break-all;
-    }
-
-    .emp-meta-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 6px;
-      flex-wrap: wrap;
-    }
+    .emp-body { flex:1; min-width:0; }
+    .emp-name { font-size:14px; font-weight:600; color:#e8f2ff; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .emp-email { font-size:12px; color:var(--text2); word-break:break-all; }
+    .emp-id-tag { font-size:10px; color:var(--text3); font-style:italic; margin-top:1px; }
+    .emp-meta-row { display:flex; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap; }
 
     .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 10px;
-      border-radius: 20px;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.6px;
-      text-transform: uppercase;
+      display:inline-flex; align-items:center; gap:4px;
+      padding:2px 10px; border-radius:20px;
+      font-size:10px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase;
     }
-
-    .badge::before {
-      content: '';
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: currentColor;
-    }
-
-    .badge-verified  { background: var(--verified);  color: var(--verified-t); }
-    .badge-bounce    { background: var(--bounce);     color: var(--bounce-t); }
-    .badge-invalid   { background: var(--invalid);    color: var(--invalid-t); }
-    .badge-pending   { background: var(--pending);    color: var(--pending-t); }
-    .badge-noemail   { background: var(--noemail);    color: var(--noemail-t); }
+    .badge::before { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; }
+    .badge-verified  { background:var(--verified);  color:var(--verified-t); }
+    .badge-bounce    { background:var(--bounce);     color:var(--bounce-t); }
+    .badge-invalid   { background:var(--invalid);    color:var(--invalid-t); }
+    .badge-pending   { background:var(--pending);    color:var(--pending-t); }
+    .badge-noemail   { background:var(--noemail);    color:var(--noemail-t); }
 
     .emp-agency-tag {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text3);
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1px 7px;
-      letter-spacing: 0.5px;
+      font-size:11px; font-weight:600; color:var(--text3);
+      background:rgba(255,255,255,0.04); border:1px solid var(--border);
+      border-radius:6px; padding:1px 7px; letter-spacing:0.5px;
     }
+    .emp-posting { font-size:11px; color:var(--text3); }
 
-    .emp-posting {
-      font-size: 11px;
-      color: var(--text3);
-    }
-
-    .emp-actions {
-      display: flex;
-      gap: 4px;
-      flex-shrink: 0;
-    }
-
+    .emp-actions { display:flex; gap:4px; flex-shrink:0; }
     .action-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.15s;
+      background:none; border:none; cursor:pointer; padding:8px;
+      border-radius:10px; display:flex; align-items:center; justify-content:center;
+      transition:background 0.15s; text-decoration:none;
     }
-
-    .action-btn:hover { background: rgba(255,255,255,0.07); }
-    .action-btn svg { width: 16px; height: 16px; }
-
-    a.action-btn {
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .action-btn:hover { background:rgba(255,255,255,0.07); }
+    .action-btn svg { width:16px; height:16px; }
 
     .empty {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 60px 20px;
-      gap: 12px;
-      color: var(--text3);
-      text-align: center;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      padding:60px 20px; gap:12px; color:var(--text3); text-align:center;
     }
-
-    .empty svg { opacity: 0.3; }
-    .empty p { font-size: 14px; }
+    .empty svg { opacity:0.3; }
+    .empty p { font-size:14px; }
 
     .fab {
-      position: fixed;
-      bottom: 28px;
-      right: 24px;
-      width: 58px;
-      height: 58px;
-      border-radius: 18px;
-      background: var(--accent);
-      color: #fff;
-      font-size: 28px;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 28px rgba(45,111,232,0.45), 0 0 0 1px rgba(74,143,255,0.3);
-      z-index: 50;
-      transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
-      font-family: 'Sora', sans-serif;
-      font-weight: 300;
+      position:fixed; bottom:28px; right:24px; width:58px; height:58px;
+      border-radius:18px; background:var(--accent); color:#fff;
+      font-size:28px; border:none; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 8px 28px rgba(45,111,232,0.45),0 0 0 1px rgba(74,143,255,0.3);
+      z-index:50; transition:all 0.15s; font-family:'Sora',sans-serif; font-weight:300;
     }
-
-    .fab:hover {
-      background: #5a9fff;
-      transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba(45,111,232,0.55), 0 0 0 1px rgba(74,143,255,0.4);
-    }
-
-    .fab:active { transform: scale(0.95) translateY(0); }
+    .fab:hover { background:#5a9fff; transform:translateY(-2px); box-shadow:0 12px 32px rgba(45,111,232,0.55),0 0 0 1px rgba(74,143,255,0.4); }
+    .fab:active { transform:scale(0.95); }
 
     .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(6, 12, 28, 0.85);
-      backdrop-filter: blur(6px);
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      z-index: 100;
+      position:fixed; inset:0; background:rgba(6,12,28,0.85);
+      backdrop-filter:blur(6px); display:flex; align-items:flex-end;
+      justify-content:center; z-index:100;
     }
-
-    .overlay.hidden { display: none; }
-
+    .overlay.hidden { display:none; }
     .modal {
-      background: var(--bg2);
-      border: 1px solid var(--border2);
-      border-radius: 22px 22px 0 0;
-      padding: 24px 22px 36px;
-      width: 100%;
-      max-width: 520px;
-      max-height: 92vh;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      background:var(--bg2); border:1px solid var(--border2);
+      border-radius:22px 22px 0 0; padding:24px 22px 36px;
+      width:100%; max-width:520px; max-height:92vh;
+      overflow-y:auto; -webkit-overflow-scrolling:touch;
     }
-
-    @media (min-width: 600px) {
-      .overlay { align-items: center; }
-      .modal { border-radius: 20px; max-height: 85vh; }
+    @media (min-width:600px) {
+      .overlay { align-items:center; }
+      .modal { border-radius:20px; max-height:85vh; }
     }
-
-    .modal-handle {
-      width: 36px;
-      height: 3px;
-      background: var(--border2);
-      border-radius: 4px;
-      margin: 0 auto 20px;
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 22px;
-    }
-
+    .modal-handle { width:36px; height:3px; background:var(--border2); border-radius:4px; margin:0 auto 20px; }
+    .modal-header { display:flex; align-items:center; gap:10px; margin-bottom:22px; }
     .modal-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: rgba(74,143,255,0.15);
-      border: 1px solid rgba(74,143,255,0.25);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width:36px; height:36px; border-radius:10px;
+      background:rgba(74,143,255,0.15); border:1px solid rgba(74,143,255,0.25);
+      display:flex; align-items:center; justify-content:center;
     }
-
-    .modal-icon svg { width: 18px; height: 18px; color: var(--accent); }
-
-    .modal h2 {
-      font-size: 16px;
-      font-weight: 600;
-      color: #e8f2ff;
-    }
+    .modal-icon svg { width:18px; height:18px; color:var(--accent); }
+    .modal h2 { font-size:16px; font-weight:600; color:#e8f2ff; }
 
     .modal label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text3);
-      display: block;
-      margin-bottom: 6px;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
+      font-size:11px; font-weight:600; color:var(--text3);
+      display:block; margin-bottom:6px; letter-spacing:0.8px; text-transform:uppercase;
     }
-
-    .modal input,
+    .modal input, .modal select {
+      width:100%; background:var(--bg3); border:1px solid var(--border);
+      border-radius:12px; padding:12px 14px; color:var(--text);
+      font-size:14px; font-family:'Sora',sans-serif; outline:none;
+      margin-bottom:14px; transition:border-color 0.2s;
+    }
+    .modal input:focus, .modal select:focus { border-color:var(--border2); }
+    .modal input::placeholder { color:var(--text3); }
     .modal select {
-      width: 100%;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 14px;
-      color: var(--text);
-      font-size: 14px;
-      font-family: 'Sora', sans-serif;
-      outline: none;
-      margin-bottom: 14px;
-      transition: border-color 0.2s;
+      -webkit-appearance:none; appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a6a98' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat:no-repeat; background-position:right 14px center; padding-right:40px; cursor:pointer;
     }
+    .modal select option { background:#0f1e36; }
 
-    .modal input:focus,
-    .modal select:focus { border-color: var(--border2); }
-    .modal input::placeholder { color: var(--text3); }
-
-    .modal select {
-      -webkit-appearance: none;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a6a98' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-      padding-right: 40px;
-      cursor: pointer;
+    /* ── No-email notice inside modal ── */
+    .noemail-notice {
+      background:rgba(74,143,255,0.06); border:1px solid rgba(74,143,255,0.18);
+      border-radius:10px; padding:9px 12px; margin-bottom:14px;
+      font-size:12px; color:var(--text3); line-height:1.55;
+      display:flex; gap:8px; align-items:flex-start;
     }
+    .noemail-notice svg { flex-shrink:0; margin-top:1px; color:var(--accent); }
 
-    .modal select option { background: #0f1e36; }
-
-    .modal-actions { display: flex; gap: 10px; margin-top: 6px; }
-
+    .modal-actions { display:flex; gap:10px; margin-top:6px; }
     .btn {
-      padding: 13px 20px;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      font-family: 'Sora', sans-serif;
-      flex: 1;
-      transition: background 0.15s, transform 0.1s;
-      letter-spacing: 0.2px;
+      padding:13px 20px; border-radius:12px; border:none; cursor:pointer;
+      font-size:14px; font-weight:600; font-family:'Sora',sans-serif; flex:1;
+      transition:all 0.15s; letter-spacing:0.2px;
     }
-
-    .btn:active { transform: scale(0.97); }
-    .btn-cancel { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
-    .btn-cancel:hover { background: rgba(255,255,255,0.06); }
-    .btn-save { background: var(--accent); color: #fff; }
-    .btn-save:hover { background: #5a9fff; }
-    .btn-del-confirm { background: #c0202e; color: #fff; }
-    .btn-del-confirm:hover { background: #d42535; }
+    .btn:active { transform:scale(0.97); }
+    .btn-cancel { background:var(--bg3); color:var(--text2); border:1px solid var(--border); }
+    .btn-cancel:hover { background:rgba(255,255,255,0.06); }
+    .btn-save { background:var(--accent); color:#fff; }
+    .btn-save:hover { background:#5a9fff; }
+    .btn-del-confirm { background:#c0202e; color:#fff; }
+    .btn-del-confirm:hover { background:#d42535; }
 
     .toast {
-      position: fixed;
-      bottom: 100px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #0e2a20;
-      color: #3dd68c;
-      border: 1px solid #1a5040;
-      border-radius: 12px;
-      padding: 11px 22px;
-      font-size: 13px;
-      font-family: 'Sora', sans-serif;
-      font-weight: 500;
-      z-index: 200;
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      position:fixed; bottom:100px; left:50%; transform:translateX(-50%);
+      background:#0e2a20; color:#3dd68c; border:1px solid #1a5040;
+      border-radius:12px; padding:11px 22px; font-size:13px;
+      font-family:'Sora',sans-serif; font-weight:500;
+      z-index:200; opacity:0; transition:opacity 0.3s; pointer-events:none;
+      white-space:nowrap; display:flex; align-items:center; gap:8px;
     }
-
-    .toast.show { opacity: 1; }
+    .toast.show { opacity:1; }
 
     .skeleton {
-      background: linear-gradient(90deg, var(--bg3) 25%, rgba(255,255,255,0.04) 50%, var(--bg3) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.4s infinite;
-      border-radius: 8px;
-      height: 14px;
+      background:linear-gradient(90deg,var(--bg3) 25%,rgba(255,255,255,0.04) 50%,var(--bg3) 75%);
+      background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:8px; height:14px;
     }
-
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    .skel-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 8px;
-    }
-
-    .skel-avatar { width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0; }
-    .skel-body { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .skel-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 18px; display:flex; align-items:center; gap:14px; margin-bottom:8px; }
+    .skel-avatar { width:40px; height:40px; border-radius:12px; flex-shrink:0; }
+    .skel-body { flex:1; display:flex; flex-direction:column; gap:8px; }
 
     .count-badge {
-      display: inline-flex;
-      align-items: center;
-      background: rgba(74,143,255,0.1);
-      color: var(--accent);
-      border: 1px solid rgba(74,143,255,0.2);
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 2px 8px;
-      margin-left: 8px;
-      vertical-align: middle;
+      display:inline-flex; align-items:center;
+      background:rgba(74,143,255,0.1); color:var(--accent);
+      border:1px solid rgba(74,143,255,0.2); border-radius:8px;
+      font-size:11px; font-weight:700; padding:2px 8px; margin-left:8px;
     }
-
     .section-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      color: var(--text3);
-      text-transform: uppercase;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size:11px; font-weight:600; letter-spacing:1.5px;
+      color:var(--text3); text-transform:uppercase; margin-bottom:12px;
+      display:flex; align-items:center; gap:8px;
     }
+    .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
 
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
+    /* Duplicate modal */
+    #dupModal .modal { max-width:440px; }
   </style>
 </head>
 <body>
-
 <div class="page">
 
-  <!-- Header -->
   <div class="header">
     <div class="logo-wrap">
       <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="topFace" x1="20" y1="10" x2="60" y2="35" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#7ab8ff"/>
-            <stop offset="100%" stop-color="#4a8fff"/>
-          </linearGradient>
-          <linearGradient id="leftFace" x1="10" y1="35" x2="40" y2="70" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#2d6fe8"/>
-            <stop offset="100%" stop-color="#1a4db8"/>
-          </linearGradient>
-          <linearGradient id="rightFace" x1="40" y1="35" x2="70" y2="70" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#3a80f0"/>
-            <stop offset="100%" stop-color="#2260c8"/>
-          </linearGradient>
+          <linearGradient id="topFace" x1="20" y1="10" x2="60" y2="35" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#7ab8ff"/><stop offset="100%" stop-color="#4a8fff"/></linearGradient>
+          <linearGradient id="leftFace" x1="10" y1="35" x2="40" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#2d6fe8"/><stop offset="100%" stop-color="#1a4db8"/></linearGradient>
+          <linearGradient id="rightFace" x1="40" y1="35" x2="70" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3a80f0"/><stop offset="100%" stop-color="#2260c8"/></linearGradient>
         </defs>
         <polygon points="40,8 70,26 40,44 10,26" fill="url(#topFace)"/>
         <polygon points="10,26 40,44 40,72 10,54" fill="url(#leftFace)"/>
@@ -698,7 +326,6 @@
     <p class="header-sub">Add, edit, and delete employee records</p>
   </div>
 
-  <!-- Cache status bar -->
   <div class="cache-bar">
     <div class="cache-bar-left">
       <div class="cache-dot" id="cacheDot"></div>
@@ -706,14 +333,12 @@
     </div>
     <button class="btn-refresh" id="refreshBtn" onclick="forceRefresh()">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-        <path d="M13.5 8A5.5 5.5 0 112.5 5"/>
-        <path d="M2.5 2v3h3"/>
+        <path d="M13.5 8A5.5 5.5 0 112.5 5"/><path d="M2.5 2v3h3"/>
       </svg>
       Refresh
     </button>
   </div>
 
-  <!-- Search -->
   <div class="toolbar">
     <div class="search-wrap">
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
@@ -724,7 +349,6 @@
     <button class="btn-search" onclick="renderList()">Search</button>
   </div>
 
-  <!-- Filter chips -->
   <div class="filter-bar">
     <div class="filter-chip active" data-agency="ALL" onclick="setAgency(this)">All</div>
     <div class="filter-chip" data-agency="GSSI" onclick="setAgency(this)">GSSI</div>
@@ -733,17 +357,14 @@
     <div class="filter-chip" data-agency="M&S" onclick="setAgency(this)">M&S</div>
   </div>
 
-  <!-- Section label + count -->
   <div class="section-label" id="sectionLabel">Employees <span class="count-badge" id="countBadge">—</span></div>
 
-  <!-- Loading skeletons -->
   <div id="skelContainer">
     <div class="skel-card"><div class="skeleton skel-avatar"></div><div class="skel-body"><div class="skeleton" style="width:60%"></div><div class="skeleton" style="width:40%"></div></div></div>
     <div class="skel-card"><div class="skeleton skel-avatar"></div><div class="skel-body"><div class="skeleton" style="width:50%"></div><div class="skeleton" style="width:35%"></div></div></div>
     <div class="skel-card"><div class="skeleton skel-avatar"></div><div class="skel-body"><div class="skeleton" style="width:65%"></div><div class="skeleton" style="width:45%"></div></div></div>
   </div>
 
-  <!-- Employee list -->
   <div class="emp-list" id="empList"></div>
   <div id="emptyMsg" class="empty" style="display:none;">
     <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#4a6a98" stroke-width="1.5">
@@ -753,10 +374,8 @@
     </svg>
     <p>No employees found</p>
   </div>
-
 </div>
 
-<!-- FAB -->
 <button class="fab" onclick="openAdd()" title="Add employee">+</button>
 
 <!-- Add/Edit Modal -->
@@ -764,17 +383,29 @@
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <div class="modal-icon" id="modalIcon">
+      <div class="modal-icon">
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
           <circle cx="10" cy="7" r="3"/><path d="M4 17c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke-linecap="round"/>
         </svg>
       </div>
       <h2 id="modalTitle">Add Employee</h2>
     </div>
+
+    <!-- Email first (it's the doc ID) -->
+    <label>Email Address <span style="color:var(--text3);font-weight:400;font-size:10px;">(used as unique ID — lowercase)</span></label>
+    <input id="fEmail" type="email" placeholder="email@example.com (leave blank if no email)" autocomplete="off">
+
+    <!-- Notice shown when editing an employee whose doc ID is email -->
+    <div class="noemail-notice" id="emailChangeNotice" style="display:none;">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" width="14" height="14">
+        <circle cx="10" cy="10" r="8"/><line x1="10" y1="6" x2="10" y2="10"/><circle cx="10" cy="14" r="0.5" fill="currentColor"/>
+      </svg>
+      <span>Changing the email will create a new record with the new email as doc ID, and delete the old one. Payslips will be re-linked automatically.</span>
+    </div>
+
     <label>Full Name</label>
     <input id="fName" placeholder="e.g. JOHN DOE EXAMPLE" autocomplete="off">
-    <label>Email Address</label>
-    <input id="fEmail" type="email" placeholder="email@example.com" autocomplete="off">
+
     <label>Status</label>
     <select id="fStatus">
       <option value="">— Select status —</option>
@@ -794,6 +425,7 @@
     </select>
     <label>Posting / Location</label>
     <input id="fPosting" placeholder="e.g. SM SAN LAZARO - SPORTS CENTRAL" autocomplete="off">
+
     <div class="modal-actions">
       <button class="btn btn-cancel" onclick="closeModal('formModal')">Cancel</button>
       <button class="btn btn-save" onclick="saveEmployee()">Save</button>
@@ -813,7 +445,7 @@
       </div>
       <h2>Delete Employee?</h2>
     </div>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6;">This action is permanent and cannot be undone.</p>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6;">This action is permanent and cannot be undone. Payslips linked to this employee will also be deleted.</p>
     <div id="delInfo" style="font-size:14px;color:var(--text);font-weight:500;margin-bottom:22px;padding:12px 14px;background:var(--bg3);border-radius:10px;border:1px solid var(--border);"></div>
     <div class="modal-actions">
       <button class="btn btn-cancel" onclick="closeModal('delModal')">Cancel</button>
@@ -832,13 +464,12 @@
           <path d="M10 3L18 17H2L10 3z"/><line x1="10" y1="9" x2="10" y2="13"/><circle cx="10" cy="15.5" r="0.5" fill="#d4b800"/>
         </svg>
       </div>
-      <h2>Possible Duplicate Detected</h2>
+      <h2>Possible Duplicate</h2>
     </div>
-    <div id="dupReason" style="background:rgba(212,184,0,0.1);border:1px solid rgba(212,184,0,0.25);border-radius:8px;padding:8px 12px;font-size:12px;color:#d4b800;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+    <div style="background:rgba(212,184,0,0.1);border:1px solid rgba(212,184,0,0.25);border-radius:8px;padding:8px 12px;font-size:12px;color:#d4b800;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 3L18 17H2L10 3z"/></svg>
       <span id="dupReasonText"></span>
     </div>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6;">Adding a duplicate may cause issues with payslip delivery.</p>
     <div id="dupCard" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:18px;"></div>
     <div class="modal-actions">
       <button class="btn btn-cancel" onclick="closeModal('dupModal')">Go back</button>
@@ -847,7 +478,6 @@
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast">
   <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 0a7 7 0 100 14A7 7 0 007 0zm3.5 5.5l-4 4a.7.7 0 01-1 0l-2-2a.7.7 0 011-1l1.5 1.5 3.5-3.5a.7.7 0 011 1z"/></svg>
   <span id="toastMsg"></span>
@@ -855,80 +485,73 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, setDoc, updateDoc, deleteDoc, doc }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getFirestore, collection, getDocs, setDoc, updateDoc,
+  deleteDoc, doc, writeBatch, getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCY1OJRqCXpaqlM8Pj9fK_itg8jhC311I4",
   authDomain: "email-checker-24db4.firebaseapp.com",
   projectId: "email-checker-24db4"
 };
-
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
-// ── Cache config ──
-const CACHE_KEY = 'admin_employees_cache';
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in ms
+const CACHE_KEY = 'admin_employees_v2';
+const CACHE_TTL = 5 * 60 * 1000;
 
 let employees    = [];
-let editingId    = null;
+let editingId    = null; // the CURRENT doc ID of the employee being edited
 let deletingId   = null;
 let activeAgency = "ALL";
+let pendingSave  = null;
 
-// ── localStorage cache helpers ──
+// ── Cache helpers ──
 function saveCache(data) {
-  try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({
-      ts: Date.now(),
-      data
-    }));
-  } catch(e) {
-    // localStorage full (payslip images?) — skip silently
-    console.warn('Cache write failed:', e.message);
-  }
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); } catch(e) {}
 }
-
 function loadCache() {
   try {
     const raw = localStorage.getItem(CACHE_KEY);
     if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (Date.now() - parsed.ts > CACHE_TTL) return null; // expired
-    return parsed;
-  } catch(e) {
-    return null;
-  }
+    const p = JSON.parse(raw);
+    if (Date.now() - p.ts > CACHE_TTL) return null;
+    return p;
+  } catch { return null; }
 }
-
-function clearCache() {
-  localStorage.removeItem(CACHE_KEY);
-}
+function clearCache() { localStorage.removeItem(CACHE_KEY); }
 
 function setCacheBar(mode, ts) {
-  const dot    = document.getElementById('cacheDot');
+  const dot = document.getElementById('cacheDot');
   const status = document.getElementById('cacheStatus');
   if (mode === 'live') {
     dot.className = 'cache-dot live';
     status.textContent = 'Live data — fetched just now';
-  } else if (mode === 'cached') {
+  } else {
     const ago = Math.round((Date.now() - ts) / 1000);
     const label = ago < 60 ? `${ago}s ago` : `${Math.round(ago/60)}m ago`;
     dot.className = 'cache-dot cached';
-    status.textContent = `Cached data · last synced ${label}`;
+    status.textContent = `Cached · last synced ${label}`;
   }
 }
 
-function generateEmpId() {
-  return "emp_" + Date.now();
+// ── Doc ID logic ──
+// If employee has a valid email → doc ID = email (lowercase)
+// If no email → doc ID = "noemail_" + timestamp (generated once on add)
+function makeDocId(email) {
+  const e = (email || '').trim().toLowerCase();
+  return e && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) ? e : null;
+}
+
+function isEmailDocId(id) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(id);
 }
 
 function getInitials(name) {
-  if (!name) return "?";
-  const parts = name.replace(/,/g,"").trim().split(/\s+/);
-  return parts.length >= 2
-    ? (parts[0][0] + parts[1][0]).toUpperCase()
-    : parts[0].slice(0,2).toUpperCase();
+  if (!name) return '?';
+  const parts = name.replace(/,/g,'').trim().split(/\s+/);
+  return parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : parts[0].slice(0,2).toUpperCase();
 }
 
 window.setAgency = function(el) {
@@ -938,20 +561,16 @@ window.setAgency = function(el) {
   renderList();
 };
 
-// ── Force refresh: skip cache, fetch from Firestore ──
 window.forceRefresh = async function() {
   const btn = document.getElementById('refreshBtn');
-  btn.classList.add('spinning');
-  btn.disabled = true;
+  btn.classList.add('spinning'); btn.disabled = true;
   clearCache();
   await loadEmployees(true);
-  btn.classList.remove('spinning');
-  btn.disabled = false;
+  btn.classList.remove('spinning'); btn.disabled = false;
   showToast('Data refreshed from Firestore.');
 };
 
 async function loadEmployees(force = false) {
-  // Try cache first (unless force)
   if (!force) {
     const cached = loadCache();
     if (cached) {
@@ -959,13 +578,11 @@ async function loadEmployees(force = false) {
       document.getElementById('skelContainer').style.display = 'none';
       setCacheBar('cached', cached.ts);
       renderList();
-      return; // ✅ Zero Firestore reads!
+      return;
     }
   }
-
-  // Cache miss or force — fetch from Firestore
   try {
-    const snap = await getDocs(collection(db, "employees"));
+    const snap = await getDocs(collection(db, 'employees'));
     employees = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     saveCache(employees);
     setCacheBar('live', Date.now());
@@ -984,43 +601,36 @@ window.renderList = function() {
   const counter = document.getElementById('countBadge');
 
   let filtered = employees.filter(e => {
-    const agencyMatch  = activeAgency === 'ALL' || (e.Agency||'') === activeAgency;
-    const searchMatch  = !q || [e.Name, e.Email, e.Agency, e.Posting, e.Status]
-                                .some(v => (v||'').toLowerCase().includes(q));
+    const agencyMatch = activeAgency === 'ALL' || (e.Agency || '') === activeAgency;
+    const searchMatch = !q || [e.Name, e.Email, e.Agency, e.Posting, e.Status]
+                               .some(v => (v||'').toLowerCase().includes(q));
     return agencyMatch && searchMatch;
   });
 
   counter.textContent = filtered.length;
-
-  if (!filtered.length) {
-    list.innerHTML = '';
-    empty.style.display = '';
-    return;
-  }
+  if (!filtered.length) { list.innerHTML = ''; empty.style.display = ''; return; }
   empty.style.display = 'none';
 
   const badgeCls = s => ({
-    'VERIFIED':     'badge-verified',
-    'BOUNCE EMAIL': 'badge-bounce',
-    'INVALID':      'badge-invalid',
-    'PENDING':      'badge-pending',
-    'NO EMAIL':     'badge-noemail',
+    'VERIFIED':'badge-verified','BOUNCE EMAIL':'badge-bounce',
+    'INVALID':'badge-invalid','PENDING':'badge-pending','NO EMAIL':'badge-noemail',
   }[s] || 'badge-pending');
 
   list.innerHTML = filtered.map((e, i) => `
-    <div class="emp-card" style="animation-delay:${i * 0.03}s">
+    <div class="emp-card" style="animation-delay:${i*0.03}s">
       <div class="emp-avatar">${getInitials(e.Name)}</div>
       <div class="emp-body">
-        <div class="emp-name">${e.Name||'—'}</div>
+        <div class="emp-name">${e.Name || '—'}</div>
         <div class="emp-email">${e.Email || '<span style="color:var(--text3);font-style:italic">No email</span>'}</div>
+        ${!isEmailDocId(e.id) ? `<div class="emp-id-tag">ID: ${e.id}</div>` : ''}
         <div class="emp-meta-row">
-          <span class="badge ${badgeCls(e.Status)}">${e.Status||'PENDING'}</span>
+          <span class="badge ${badgeCls(e.Status)}">${e.Status || 'PENDING'}</span>
           ${e.Agency ? `<span class="emp-agency-tag">${e.Agency}</span>` : ''}
           ${e.Posting ? `<span class="emp-posting">· ${e.Posting}</span>` : ''}
         </div>
       </div>
       <div class="emp-actions">
-        <a class="action-btn view-btn" href="payslipsummary.html?id=${e.id}&name=${encodeURIComponent(e.Name||'')}" title="View Payslips">
+        <a class="action-btn" href="payslipsummary.html?id=${encodeURIComponent(e.id)}&name=${encodeURIComponent(e.Name||'')}" title="View Payslips">
           <svg viewBox="0 0 20 20" fill="none" stroke="#3dd68c" stroke-width="1.8" stroke-linecap="round">
             <ellipse cx="10" cy="10" rx="8" ry="5"/><circle cx="10" cy="10" r="2"/>
           </svg>
@@ -1036,132 +646,160 @@ window.renderList = function() {
           </svg>
         </button>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 };
 
+// ── ADD ──
 window.openAdd = function() {
   editingId = null;
   document.getElementById('modalTitle').textContent = 'Add Employee';
-  ['fName','fEmail','fPosting'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('fStatus').value = '';
-  document.getElementById('fAgency').value = '';
+  document.getElementById('fEmail').value   = '';
+  document.getElementById('fName').value    = '';
+  document.getElementById('fStatus').value  = '';
+  document.getElementById('fAgency').value  = '';
+  document.getElementById('fPosting').value = '';
+  document.getElementById('fEmail').disabled = false;
+  document.getElementById('emailChangeNotice').style.display = 'none';
   document.getElementById('formModal').classList.remove('hidden');
 };
 
+// ── EDIT ──
 window.openEdit = function(id) {
   const e = employees.find(x => x.id === id);
   if (!e) return;
   editingId = id;
   document.getElementById('modalTitle').textContent = 'Edit Employee';
-  document.getElementById('fName').value    = e.Name    || '';
   document.getElementById('fEmail').value   = e.Email   || '';
+  document.getElementById('fName').value    = e.Name    || '';
   document.getElementById('fStatus').value  = e.Status  || '';
   document.getElementById('fAgency').value  = e.Agency  || '';
   document.getElementById('fPosting').value = e.Posting || '';
+  document.getElementById('fEmail').disabled = false;
+  // Show notice only if current doc ID is email-based (changing email = changing doc ID)
+  document.getElementById('emailChangeNotice').style.display = isEmailDocId(id) ? '' : 'none';
   document.getElementById('formModal').classList.remove('hidden');
 };
 
-let pendingSaveData = null; // holds data when user chooses to force-save
-
+// ── SAVE (Add or Edit) ──
 window.saveEmployee = async function(force = false) {
+  const rawEmail = document.getElementById('fEmail').value.trim().toLowerCase();
   const data = {
-    Name:      document.getElementById('fName').value.trim(),
-    Email:     document.getElementById('fEmail').value.trim().toLowerCase(),
-    Status:    document.getElementById('fStatus').value,
-    Agency:    document.getElementById('fAgency').value,
-    Posting:   document.getElementById('fPosting').value.trim(),
+    Name:    document.getElementById('fName').value.trim(),
+    Email:   rawEmail,
+    Status:  document.getElementById('fStatus').value,
+    Agency:  document.getElementById('fAgency').value,
+    Posting: document.getElementById('fPosting').value.trim(),
     updatedAt: new Date().toISOString()
   };
+
   if (!data.Name) { showToast('Name is required.', true); return; }
 
-  // ── Duplicate check (skip if force) ──
+  // ── Determine the doc ID to use ──
+  // If email is valid → doc ID = email
+  // If no email       → doc ID = existing editingId (if editing) or new "noemail_xxx"
+  const newDocId = makeDocId(rawEmail) || (editingId && !isEmailDocId(editingId) ? editingId : `noemail_${Date.now()}`);
+
+  // ── Duplicate check (skip when force) ──
   if (!force) {
-    const nameLower  = data.Name.toLowerCase();
-    const emailLower = data.Email.toLowerCase();
     const dup = employees.find(e => {
-      if (editingId && e.id === editingId) return false; // ignore self when editing
-      const sameName  = e.Name  && e.Name.toLowerCase()  === nameLower;
-      const sameEmail = e.Email && e.Email.toLowerCase() === emailLower && emailLower !== '';
+      if (editingId && e.id === editingId) return false;
+      const sameName  = e.Name  && e.Name.toLowerCase()  === data.Name.toLowerCase();
+      const sameEmail = rawEmail && e.Email && e.Email.toLowerCase() === rawEmail;
       return sameName || sameEmail;
     });
-
     if (dup) {
-      // Determine reason label
       const reasons = [];
-      if (dup.Name  && dup.Name.toLowerCase()  === nameLower)  reasons.push('same name');
-      if (dup.Email && dup.Email.toLowerCase() === emailLower && emailLower !== '') reasons.push('same email address');
+      if (dup.Name  && dup.Name.toLowerCase()  === data.Name.toLowerCase())  reasons.push('same name');
+      if (rawEmail  && dup.Email && dup.Email.toLowerCase() === rawEmail)      reasons.push('same email');
       document.getElementById('dupReasonText').textContent =
-        (reasons.length === 2 ? 'Same name and email address' : reasons[0][0].toUpperCase() + reasons[0].slice(1)) + ' already exists in the records.';
-
-      // Show existing record card
-      const badgeCls = s => ({'VERIFIED':'badge-verified','BOUNCE EMAIL':'badge-bounce','INVALID':'badge-invalid','PENDING':'badge-pending','NO EMAIL':'badge-noemail'}[s] || 'badge-pending');
+        (reasons.length === 2 ? 'Same name and email' : reasons[0][0].toUpperCase() + reasons[0].slice(1)) + ' already exists.';
+      const bc = s => ({'VERIFIED':'badge-verified','BOUNCE EMAIL':'badge-bounce','INVALID':'badge-invalid','PENDING':'badge-pending','NO EMAIL':'badge-noemail'}[s]||'badge-pending');
       document.getElementById('dupCard').innerHTML = `
         <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;">Existing record</div>
         <div style="display:flex;align-items:center;gap:10px;">
           <div class="emp-avatar">${getInitials(dup.Name)}</div>
           <div>
-            <div class="emp-name">${dup.Name || '—'}</div>
-            <div class="emp-email">${dup.Email || '<span style="color:var(--text3);font-style:italic">No email</span>'}</div>
-            <div style="margin-top:6px;">
-              <span class="badge ${badgeCls(dup.Status)}">${dup.Status || 'PENDING'}</span>
-              ${dup.Agency ? `<span class="emp-agency-tag" style="margin-left:6px;">${dup.Agency}</span>` : ''}
-            </div>
+            <div class="emp-name">${dup.Name||'—'}</div>
+            <div class="emp-email">${dup.Email||'<span style="color:var(--text3);font-style:italic">No email</span>'}</div>
+            <div style="margin-top:6px;"><span class="badge ${bc(dup.Status)}">${dup.Status||'PENDING'}</span>${dup.Agency?`<span class="emp-agency-tag" style="margin-left:6px;">${dup.Agency}</span>`:''}</div>
           </div>
         </div>`;
-      pendingSaveData = { data, editingId };
+      pendingSave = { data, newDocId, editingId };
       closeModal('formModal');
       document.getElementById('dupModal').classList.remove('hidden');
       return;
     }
   }
 
-  // ── Proceed with save ──
+  await doSave(data, newDocId, editingId);
+};
+
+async function doSave(data, newDocId, oldDocId) {
+  const saveBtn = document.querySelector('#formModal .btn-save');
+  if (saveBtn) { saveBtn.textContent = 'Saving…'; saveBtn.disabled = true; }
+
   try {
-    if (editingId) {
-      await updateDoc(doc(db, "employees", editingId), data);
-      const idx = employees.findIndex(x => x.id === editingId);
-      employees[idx] = { id: editingId, ...data };
-      showToast('Employee updated successfully.');
+    if (oldDocId) {
+      // ── EDIT ──
+      if (oldDocId === newDocId) {
+        // Doc ID unchanged — simple update
+        await updateDoc(doc(db, 'employees', oldDocId), data);
+        const idx = employees.findIndex(x => x.id === oldDocId);
+        if (idx !== -1) employees[idx] = { id: oldDocId, ...data };
+        showToast('Employee updated.');
+      } else {
+        // Doc ID changed (email changed) — create new doc, move payslips, delete old
+        showToast('Updating record and re-linking payslips…');
+        await setDoc(doc(db, 'employees', newDocId), data);
+
+        // Move payslips subcollection if any
+        try {
+          const paySnap = await getDocs(collection(db, 'employees', oldDocId, 'payslips'));
+          if (!paySnap.empty) {
+            const batch = writeBatch(db);
+            paySnap.forEach(p => {
+              batch.set(doc(db, 'employees', newDocId, 'payslips', p.id), p.data());
+              batch.delete(p.ref);
+            });
+            await batch.commit();
+          }
+        } catch(e) { console.warn('Payslip move failed:', e); }
+
+        await deleteDoc(doc(db, 'employees', oldDocId));
+        const idx = employees.findIndex(x => x.id === oldDocId);
+        if (idx !== -1) employees[idx] = { id: newDocId, ...data };
+        else employees.push({ id: newDocId, ...data });
+        showToast('Employee updated & record re-linked.');
+      }
     } else {
-      const newId = generateEmpId();
-      await setDoc(doc(db, "employees", newId), data);
-      employees.push({ id: newId, ...data });
-      showToast('Employee added successfully.');
+      // ── ADD ──
+      await setDoc(doc(db, 'employees', newDocId), data);
+      employees.push({ id: newDocId, ...data });
+      showToast('Employee added.');
     }
+
     saveCache(employees);
     setCacheBar('live', Date.now());
     closeModal('formModal');
     closeModal('dupModal');
     renderList();
-  } catch(err) { showToast('Error saving. Please try again.', true); console.error(err); }
-};
+  } catch(err) {
+    showToast('Error saving. Please try again.', true);
+    console.error(err);
+  } finally {
+    if (saveBtn) { saveBtn.textContent = 'Save'; saveBtn.disabled = false; }
+  }
+}
 
 window.forceSave = async function() {
-  if (!pendingSaveData) return;
-  editingId = pendingSaveData.editingId;
-  // re-populate fields so saveEmployee reads them (or directly pass data)
-  const { data } = pendingSaveData;
-  pendingSaveData = null;
+  if (!pendingSave) return;
+  const { data, newDocId, editingId: oldId } = pendingSave;
+  pendingSave = null;
   closeModal('dupModal');
-  try {
-    if (editingId) {
-      await updateDoc(doc(db, "employees", editingId), data);
-      const idx = employees.findIndex(x => x.id === editingId);
-      employees[idx] = { id: editingId, ...data };
-      showToast('Employee updated successfully.');
-    } else {
-      const newId = generateEmpId();
-      await setDoc(doc(db, "employees", newId), data);
-      employees.push({ id: newId, ...data });
-      showToast('Employee added (duplicate acknowledged).');
-    }
-    saveCache(employees);
-    setCacheBar('live', Date.now());
-    renderList();
-  } catch(err) { showToast('Error saving. Please try again.', true); }
+  await doSave(data, newDocId, oldId);
 };
 
+// ── DELETE ──
 window.openDelete = function(id) {
   const e = employees.find(x => x.id === id);
   if (!e) return;
@@ -1172,14 +810,23 @@ window.openDelete = function(id) {
 
 window.confirmDelete = async function() {
   try {
-    await deleteDoc(doc(db, "employees", deletingId));
+    // Delete payslips subcollection first
+    try {
+      const paySnap = await getDocs(collection(db, 'employees', deletingId, 'payslips'));
+      if (!paySnap.empty) {
+        const batch = writeBatch(db);
+        paySnap.forEach(p => batch.delete(p.ref));
+        await batch.commit();
+      }
+    } catch(e) { console.warn('Could not delete payslips:', e); }
+
+    await deleteDoc(doc(db, 'employees', deletingId));
     employees = employees.filter(x => x.id !== deletingId);
-    // Update cache after delete
     saveCache(employees);
     closeModal('delModal');
     renderList();
     showToast('Employee deleted.');
-  } catch(err) { showToast('Error deleting. Please try again.', true); }
+  } catch(err) { showToast('Error deleting.', true); }
 };
 
 window.closeModal = function(id) {
@@ -1187,14 +834,13 @@ window.closeModal = function(id) {
 };
 
 function showToast(msg, isError) {
-  const t    = document.getElementById('toast');
-  const span = document.getElementById('toastMsg');
-  span.textContent = msg;
-  t.style.background   = isError ? '#2a0e18' : '#0e2a20';
-  t.style.color        = isError ? '#e06080' : '#3dd68c';
-  t.style.borderColor  = isError ? '#5a1828' : '#1a5040';
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.style.background  = isError ? '#2a0e18' : '#0e2a20';
+  t.style.color       = isError ? '#e06080' : '#3dd68c';
+  t.style.borderColor = isError ? '#5a1828' : '#1a5040';
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+  setTimeout(() => t.classList.remove('show'), isError ? 5000 : 3000);
 }
 
 loadEmployees();
