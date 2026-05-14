@@ -444,7 +444,7 @@
       transition: all 0.2s; backdrop-filter: blur(8px); z-index: 100;
       box-shadow: 0 4px 16px rgba(59,130,246,0.2);
     }
-    .help-btn:hover { background: rgba(59,130,246,0.3); box-shadow: 0 0 20px rgba(59,130,246,0.45)); transform: scale(1.1); }
+    .help-btn:hover { background: rgba(59,130,246,0.3); box-shadow: 0 0 20px rgba(59,130,246,0.45); transform: scale(1.1); }
     .modal-body-help { padding: 20px; display: flex; flex-direction: column; gap: 0; overflow-y: auto; }
     .step { display: flex; gap: 14px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
     .step:last-child { border-bottom: none; }
@@ -1167,22 +1167,5 @@ document.getElementById("emailInput").addEventListener("input", function() {
 });
 </script>
 
-<!--
-═══════════════════════════════════════════════════════════════
-  FIRESTORE INDEX REQUIRED
-  For orderBy("createdAt","desc") on the payslips subcollection,
-  create this index in your Firebase Console:
-
-  Collection group : payslips
-  Fields           : createdAt  DESC
-  Query scope      : Collection group
-
-  Or paste this URL in your browser to auto-create it:
-  https://console.firebase.google.com/project/email-checker-24db4/firestore/indexes
-
-  If you skip this, the code automatically falls back to
-  unordered getDocs (still works, just not sorted by date).
-═══════════════════════════════════════════════════════════════
--->
 </body>
 </html>
