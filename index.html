@@ -165,6 +165,7 @@
     .msg-icon.warn  { background: rgba(245,158,11,0.12); }
     .msg-icon.error { background: rgba(239,68,68,0.1); }
     .msg-icon.info  { background: rgba(59,130,246,0.12); }
+    .msg-icon.maint { background: rgba(139,92,246,0.12); }
     .msg-big {
       font-family: 'Sora', sans-serif;
       font-size: clamp(0.95rem, 4vw, 1.15rem);
@@ -173,6 +174,59 @@
     }
     .msg-sub { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
     .msg-sub em { color: var(--accent); font-style: italic; }
+
+    /* ── Back Soon Card ── */
+    .back-soon-card {
+      width: 100%;
+      background: rgba(139,92,246,0.06);
+      border: 1px solid rgba(139,92,246,0.22);
+      border-radius: 18px; backdrop-filter: blur(12px);
+      box-shadow: 0 4px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
+      display: none; animation: fadeUp 0.35s cubic-bezier(0.16,1,0.3,1) both;
+      overflow: hidden;
+    }
+    .back-soon-card.visible { display: block; }
+    .back-soon-card::before {
+      content: ''; display: block; height: 3px;
+      background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+    }
+    .back-soon-inner { padding: 32px 28px; text-align: center; }
+    .back-soon-icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(139,92,246,0.14);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px; font-size: 2rem;
+      animation: backSoonPulse 3s ease-in-out infinite;
+    }
+    @keyframes backSoonPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(139,92,246,0); }
+      50%       { box-shadow: 0 0 0 10px rgba(139,92,246,0.1); }
+    }
+    .back-soon-agency {
+      display: inline-block;
+      font-family: 'Sora', sans-serif; font-size: 0.6rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: #a78bfa; background: rgba(139,92,246,0.12);
+      border: 1px solid rgba(139,92,246,0.3);
+      border-radius: 20px; padding: 3px 12px; margin-bottom: 12px;
+    }
+    .back-soon-title {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(1rem, 4.5vw, 1.2rem);
+      font-weight: 700; color: #fff;
+      letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .back-soon-msg {
+      font-size: 0.83rem; color: var(--muted); line-height: 1.65; margin-bottom: 18px;
+    }
+    .back-soon-msg strong { color: #c4b5fd; }
+    .back-soon-note {
+      font-size: 0.72rem; color: rgba(139,92,246,0.7);
+      background: rgba(139,92,246,0.07);
+      border: 1px solid rgba(139,92,246,0.18);
+      border-radius: 8px; padding: 8px 14px;
+      line-height: 1.5;
+    }
 
     /* ── Quota Card ── */
     .quota-card {
@@ -515,6 +569,21 @@
     </div>
   </div>
 
+  <!-- Back Soon card — shown when agency access is disabled by admin -->
+  <div class="back-soon-card" id="backSoonCard">
+    <div class="back-soon-inner">
+      <div class="back-soon-icon">🔧</div>
+      <div class="back-soon-agency" id="backSoonAgencyLabel">Agency</div>
+      <div class="back-soon-title">We'll Be Back Soon</div>
+      <div class="back-soon-msg" id="backSoonMsg">
+        Payslip access for your agency is temporarily unavailable. Please check back later.
+      </div>
+      <div class="back-soon-note">
+        For urgent concerns, please contact your inspector or team leader.
+      </div>
+    </div>
+  </div>
+
   <div class="msg-card" id="notFoundCard">
     <div class="msg-inner">
       <div class="msg-icon warn">⚠️</div>
@@ -703,19 +772,20 @@ const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
 // ── Config ──
-const CACHE_TTL_MS   = 30 * 60 * 1000; // 30 min — survives tab close, 0 reads on repeat
-const PAGE_SIZE      = 6;
+const CACHE_TTL_MS          = 30 * 60 * 1000;  // 30 min — employee record
+const SETTINGS_CACHE_TTL_MS = 10 * 60 * 1000;  // 10 min — agency settings
+const PAGE_SIZE = 6;
 
 // ── sessionStorage — short-lived, payslip image data per session ──
 function ssGet(key)      { try { return JSON.parse(sessionStorage.getItem(key)); } catch { return null; } }
 function ssSet(key, val) { try { sessionStorage.setItem(key, JSON.stringify(val)); } catch {} }
 
-// ── localStorage — 30-min TTL for employee + payslip list ──
-function lsGet(key) {
+// ── localStorage — TTL-aware generic helper ──
+function lsGet(key, ttl) {
   try {
     const item = JSON.parse(localStorage.getItem(key));
     if (!item) return null;
-    if (Date.now() - item.ts > CACHE_TTL_MS) { localStorage.removeItem(key); return null; }
+    if (Date.now() - item.ts > ttl) { localStorage.removeItem(key); return null; }
     return item.val;
   } catch { return null; }
 }
@@ -724,7 +794,7 @@ function lsSet(key, val) {
 }
 
 // ── State ──
-let currentEmployeeDocId = null;  // = email (the doc ID)
+let currentEmployeeDocId = null;
 let currentEmployeeName  = null;
 let currentPayslipSrc    = null;
 let currentPayslipPeriod = null;
@@ -732,13 +802,15 @@ let allPayslipMeta       = [];
 let shownCount           = 0;
 let countdownTimer       = null;
 
+// Cached agency settings (in-memory after first fetch)
+let agencySettingsCache  = null;
+
 // ── Utilities ──
 function escapeHtml(str) {
   return String(str)
     .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
     .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 }
-// Safe attr escape — used inside onclick='...' string interpolation
 function escapeAttr(str) {
   return String(str)
     .replace(/\\/g,"\\\\")
@@ -759,9 +831,10 @@ function setCheckBtnLoading(loading) {
 }
 
 function hideAll() {
-  ["resultCard","notFoundCard","invalidCard","lowercaseCard"].forEach(id =>
-    document.getElementById(id).classList.remove("visible")
-  );
+  ["resultCard","notFoundCard","invalidCard","lowercaseCard","backSoonCard"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove("visible");
+  });
   const qc = document.getElementById("quotaCard");
   qc.style.display  = "none";
   qc.classList.remove("visible");
@@ -787,7 +860,6 @@ function showQuotaCard() {
 function startCountdown() {
   function tick() {
     const now   = new Date();
-    // Philippine Time = UTC+8
     const phNow = new Date(now.getTime() + (8 * 60 - now.getTimezoneOffset()) * 60000);
     const phMid = new Date(phNow);
     phMid.setHours(24, 0, 0, 0);
@@ -807,9 +879,41 @@ function startCountdown() {
 }
 
 // ════════════════════════════════════════════════════════
+//  AGENCY SETTINGS LOADER
+//  • 1 Firestore read total, cached 10 min in localStorage
+//  • Also stored in-memory (agencySettingsCache) for the session
+//  • Pre-fetched on page load so it's warm before the user types
+// ════════════════════════════════════════════════════════
+async function loadAgencySettings() {
+  // 1. In-memory (already fetched this session)
+  if (agencySettingsCache) return agencySettingsCache;
+
+  // 2. localStorage (fresh within 10 min — 0 Firestore reads)
+  const cached = lsGet("agency_settings_v1", SETTINGS_CACHE_TTL_MS);
+  if (cached) {
+    agencySettingsCache = cached;
+    return cached;
+  }
+
+  // 3. Firestore — 1 read, then cache
+  try {
+    const snap = await getDoc(doc(db, "settings", "agencyControl"));
+    const settings = snap.exists() ? snap.data() : {};
+    agencySettingsCache = settings;
+    lsSet("agency_settings_v1", settings);
+    return settings;
+  } catch (err) {
+    console.warn("loadAgencySettings error:", err);
+    // On error, return empty object — fail open (don't block employees)
+    return {};
+  }
+}
+
+// ════════════════════════════════════════════════════════
 //  1. EMAIL CHECK
-//     • email IS the document ID → 1 read (getDoc), never a query
+//     • email IS the document ID → 1 read (getDoc)
 //     • localStorage 30-min cache → 0 reads on repeat visits
+//     • After employee fetch: check agency access → show Back Soon if disabled
 // ════════════════════════════════════════════════════════
 window.checkEmail = async function () {
   const raw = document.getElementById("emailInput").value.trim();
@@ -830,15 +934,15 @@ window.checkEmail = async function () {
   }
 
   const email    = raw.toLowerCase();
-  const cacheKey = `emp_v3_${email}`;   // bump version if schema changes
+  const cacheKey = `emp_v3_${email}`;
 
   // ── Serve from cache if fresh (0 Firestore reads) ──
-  let empData = lsGet(cacheKey);
+  let empData = lsGet(cacheKey, CACHE_TTL_MS);
 
   if (!empData) {
     setCheckBtnLoading(true);
     try {
-      // ✅ 1 READ ONLY — email is the doc ID, no query needed
+      // ✅ 1 READ ONLY — email is the doc ID
       const snap = await getDoc(doc(db, "employees", email));
 
       if (!snap.exists()) {
@@ -847,7 +951,7 @@ window.checkEmail = async function () {
       }
 
       empData = { id: snap.id, ...snap.data() };
-      lsSet(cacheKey, empData);           // cache → 0 reads for 30 min
+      lsSet(cacheKey, empData);
     } catch (err) {
       console.error("checkEmail error:", err);
       if (isQuotaError(err)) { showQuotaCard(); return; }
@@ -863,8 +967,29 @@ window.checkEmail = async function () {
     return;
   }
 
+  // ── Check agency access control ──
+  // loadAgencySettings() is cached — no extra Firestore read after first call
+  const agencySettings = await loadAgencySettings();
+  const empAgency      = (empData.Agency || "").trim();
+  const agencySetting  = agencySettings[empAgency];
+
+  if (agencySetting && agencySetting.enabled === false) {
+    // Agency is disabled by admin — show Back Soon card
+    const label = document.getElementById("backSoonAgencyLabel");
+    const msgEl = document.getElementById("backSoonMsg");
+    if (label) label.textContent = empAgency || "Your Agency";
+    if (msgEl) {
+      const customMsg = (agencySetting.message || "").trim();
+      msgEl.textContent = customMsg
+        ? customMsg
+        : `Payslip access for ${empAgency || "your agency"} is temporarily unavailable. Please check back later.`;
+    }
+    document.getElementById("backSoonCard").classList.add("visible");
+    return;
+  }
+
   // ── Populate result card ──
-  currentEmployeeDocId = empData.id;          // = the email string
+  currentEmployeeDocId = empData.id;
   currentEmployeeName  = empData.Name || "Employee";
 
   const status = (empData.Status || "").trim().toUpperCase();
@@ -894,10 +1019,6 @@ window.checkEmail = async function () {
 
 // ════════════════════════════════════════════════════════
 //  2. PAYSLIP LIST
-//     • subcollection path: employees/{email}/payslips
-//     • orderBy createdAt desc — requires a Firestore index
-//       (see README below for how to create it)
-//     • falls back to unordered getDocs if index missing
 // ════════════════════════════════════════════════════════
 window.openPayslipSummary = async function () {
   if (!currentEmployeeDocId) return;
@@ -911,7 +1032,7 @@ window.openPayslipSummary = async function () {
   document.getElementById("payslipSummaryModal").classList.add("open");
 
   const listCacheKey = `payslip_list_v3_${currentEmployeeDocId}`;
-  const cachedList   = lsGet(listCacheKey);
+  const cachedList   = lsGet(listCacheKey, CACHE_TTL_MS);
 
   if (cachedList) {
     allPayslipMeta = cachedList;
@@ -921,15 +1042,12 @@ window.openPayslipSummary = async function () {
   }
 
   try {
-    // ✅ subcollection uses email as parent doc ID — correct path
     const payslipsRef = collection(db, "employees", currentEmployeeDocId, "payslips");
     let snap;
     try {
-      // Ordered query (needs a Firestore index on createdAt DESC)
       const q = query(payslipsRef, orderBy("createdAt", "desc"), limit(50));
       snap = await getDocs(q);
     } catch (indexErr) {
-      // Fallback: unordered fetch (no index required)
       console.warn("Index not found, falling back to unordered fetch:", indexErr.message);
       snap = await getDocs(payslipsRef);
     }
@@ -982,7 +1100,6 @@ function renderPayslipList() {
   shownCount   += newPage.length;
 
   if (shownCount === newPage.length) {
-    // First render — build skeleton
     let html = `<div class="payslip-list">
       <div class="payslip-list-header"><span>Date Period</span><span>Payslip</span></div>
       <div id="payslipRows"></div>`;
@@ -1027,7 +1144,6 @@ window.loadMorePayslips = function () { renderPayslipList(); };
 
 // ════════════════════════════════════════════════════════
 //  4. FULL PAYSLIP VIEW
-//     • 1 read per payslip, cached in sessionStorage for the session
 // ════════════════════════════════════════════════════════
 window.openFullPayslip = async function (empId, payslipId, period) {
   currentPayslipSrc    = null;
@@ -1042,13 +1158,11 @@ window.openFullPayslip = async function (empId, payslipId, period) {
     </div>`;
   document.getElementById("payslipViewModal").classList.add("open");
 
-  // sessionStorage cache — per-session, clears on tab close (good for privacy)
   const imgCacheKey = `payslip_img_${empId}_${payslipId}`;
   let   cachedData  = ssGet(imgCacheKey);
 
   if (!cachedData) {
     try {
-      // ✅ 1 READ — direct doc lookup
       const snap = await getDoc(doc(db, "employees", empId, "payslips", payslipId));
       if (!snap.exists()) {
         document.getElementById("payslipViewBody").innerHTML = `
@@ -1159,12 +1273,16 @@ document.getElementById("emailInput").addEventListener("keydown", e => {
   if (e.key === "Enter") window.checkEmail();
 });
 
-// Auto-lowercase the input as the user types (prevents confusion)
+// Auto-lowercase the input as the user types
 document.getElementById("emailInput").addEventListener("input", function() {
   const pos = this.selectionStart;
   this.value = this.value.toLowerCase();
   this.setSelectionRange(pos, pos);
 });
+
+// ── Pre-fetch agency settings on page load so it's warm by the time user hits Check ──
+// This counts as the only settings read (cached 10 min afterwards)
+loadAgencySettings().catch(() => {});
 </script>
 
 </body>

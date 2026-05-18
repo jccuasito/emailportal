@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Admin Lock Screen</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #070e1f;
+      --bg2:     #0b1528;
+      --card:    #0d1a30;
+      --border:  rgba(100,160,255,0.13);
+      --border2: rgba(100,160,255,0.28);
+      --accent:  #4a8fff;
+      --accent2: #2d6fe8;
+      --text:    #d4e6ff;
+      --text2:   #7a9cc8;
+      --text3:   #3a5a88;
+      --err:     #e05060;
+      --err-bg:  rgba(224,80,96,0.1);
+    }
+
+    html, body {
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: 'Sora', sans-serif;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* ── Ambient background ── */
+    .bg-glow {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    }
+    .bg-glow::before {
+      content: '';
+      position: absolute;
+      top: -20%; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(45,111,232,0.12) 0%, transparent 70%);
+      animation: pulseGlow 6s ease-in-out infinite;
+    }
+    .bg-glow::after {
+      content: '';
+      position: absolute;
+      bottom: -10%; right: 10%;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(74,143,255,0.07) 0%, transparent 70%);
+      animation: pulseGlow 8s ease-in-out infinite reverse;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+      50%       { opacity: 1;   transform: translateX(-50%) scale(1.08); }
+    }
+
+    /* ── Grid lines background ── */
+    .bg-grid {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(74,143,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(74,143,255,0.03) 1px, transparent 1px);
+      background-size: 44px 44px;
+    }
+
+    /* ── Main card ── */
+    .lock-wrap {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 360px;
+      padding: 20px 16px 32px;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 0;
+      animation: fadeIn 0.5s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Logo ── */
+    .logo-area {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .logo-box {
+      width: 64px; height: 64px;
+      animation: logoFloat 4s ease-in-out infinite;
+      filter: drop-shadow(0 6px 20px rgba(74,143,255,0.4));
+    }
+    @keyframes logoFloat {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+
+    .lock-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(74,143,255,0.08);
+      border: 1px solid var(--border);
+      border-radius: 20px; padding: 4px 12px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--accent);
+    }
+    .lock-badge svg { width: 10px; height: 10px; }
+
+    .lock-title {
+      font-size: 22px; font-weight: 800;
+      color: #fff; letter-spacing: -0.5px;
+      text-align: center;
+    }
+    .lock-sub {
+      font-size: 12px; color: var(--text2);
+      font-weight: 300; text-align: center;
+    }
+
+    /* ── Card ── */
+    .pin-card {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px 24px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    /* ── Time display ── */
+    .time-display {
+      text-align: center; margin-bottom: 24px;
+    }
+    .time-clock {
+      font-size: 42px; font-weight: 700;
+      color: #fff; letter-spacing: -1px;
+      line-height: 1; font-variant-numeric: tabular-nums;
+    }
+    .time-date {
+      font-size: 12px; color: var(--text2);
+      font-weight: 400; margin-top: 4px; letter-spacing: 0.5px;
+    }
+
+    /* ── PIN dots ── */
+    .pin-dots {
+      display: flex; align-items: center; justify-content: center;
+      gap: 14px; margin-bottom: 24px;
+    }
+    .pin-dot {
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 2px solid var(--border2);
+      background: transparent;
+      transition: all 0.18s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .pin-dot.filled {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(74,143,255,0.6);
+      transform: scale(1.15);
+    }
+    .pin-dot.error {
+      background: var(--err);
+      border-color: var(--err);
+      box-shadow: 0 0 10px rgba(224,80,96,0.5);
+    }
+
+    /* ── Error message ── */
+    .error-msg {
+      text-align: center;
+      font-size: 12px; font-weight: 600;
+      color: var(--err);
+      background: var(--err-bg);
+      border: 1px solid rgba(224,80,96,0.2);
+      border-radius: 8px; padding: 7px 12px;
+      margin-bottom: 16px;
+      opacity: 0; transform: translateY(-4px);
+      transition: all 0.2s;
+    }
+    .error-msg.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Numpad ── */
+    .numpad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .num-btn {
+      aspect-ratio: 1;
+      border-radius: 14px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Sora', sans-serif;
+      font-size: 20px; font-weight: 600;
+      cursor: pointer;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1px;
+      transition: all 0.12s;
+      position: relative; overflow: hidden;
+      user-select: none; -webkit-tap-highlight-color: transparent;
+    }
+    .num-btn .num-sub {
+      font-size: 7px; font-weight: 700;
+      letter-spacing: 1.5px; color: var(--text3);
+      text-transform: uppercase;
+    }
+    .num-btn:hover {
+      background: rgba(74,143,255,0.1);
+      border-color: var(--border2);
+      color: #fff;
+    }
+    .num-btn:active, .num-btn.pressed {
+      background: rgba(74,143,255,0.18);
+      border-color: rgba(74,143,255,0.45);
+      transform: scale(0.93);
+    }
+    .num-btn.del-btn {
+      font-size: 14px;
+      color: var(--text2);
+    }
+    .num-btn.del-btn:hover { color: var(--err); border-color: rgba(224,80,96,0.3); background: var(--err-bg); }
+    .num-btn.zero-btn { grid-column: 2; }
+
+    /* ── Ripple ── */
+    .ripple {
+      position: absolute; border-radius: 50%;
+      background: rgba(74,143,255,0.25);
+      pointer-events: none;
+      animation: rippleAnim 0.4s ease-out forwards;
+    }
+    @keyframes rippleAnim {
+      from { width: 0; height: 0; opacity: 1; transform: translate(-50%,-50%) scale(1); }
+      to   { width: 120px; height: 120px; opacity: 0; transform: translate(-50%,-50%) scale(1); }
+    }
+
+    /* ── Shake animation ── */
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      15%     { transform: translateX(-8px); }
+      30%     { transform: translateX(8px); }
+      45%     { transform: translateX(-6px); }
+      60%     { transform: translateX(6px); }
+      75%     { transform: translateX(-3px); }
+      90%     { transform: translateX(3px); }
+    }
+    .pin-card.shake { animation: shake 0.45s ease; }
+
+    /* ── Footer ── */
+    .lock-footer {
+      margin-top: 20px;
+      font-size: 11px; color: var(--text3);
+      text-align: center; line-height: 1.6;
+    }
+    .lock-footer strong { color: var(--text2); }
+
+    /* ── Unlock success overlay ── */
+    .unlock-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .unlock-overlay.show { opacity: 1; pointer-events: all; }
+    .unlock-check {
+      width: 72px; height: 72px; border-radius: 22px;
+      background: rgba(61,214,140,0.12);
+      border: 2px solid rgba(61,214,140,0.3);
+      display: flex; align-items: center; justify-content: center;
+      animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    .unlock-check svg { width: 36px; height: 36px; color: #3dd68c; }
+    .unlock-text {
+      font-size: 16px; font-weight: 700; color: #fff;
+      animation: fadeInUp 0.4s 0.1s ease both;
+    }
+    .unlock-sub {
+      font-size: 12px; color: var(--text2);
+      animation: fadeInUp 0.4s 0.18s ease both;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="bg-grid"></div>
+
+<div class="lock-wrap">
+  <div class="logo-area">
+    <svg class="logo-box" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="tF" x1="20" y1="10" x2="60" y2="35" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#7ab8ff"/><stop offset="100%" stop-color="#4a8fff"/></linearGradient>
+        <linearGradient id="lF" x1="10" y1="35" x2="40" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#2d6fe8"/><stop offset="100%" stop-color="#1a4db8"/></linearGradient>
+        <linearGradient id="rF" x1="40" y1="35" x2="70" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#3a80f0"/><stop offset="100%" stop-color="#2260c8"/></linearGradient>
+      </defs>
+      <polygon points="40,8 70,26 40,44 10,26" fill="url(#tF)"/>
+      <polygon points="10,26 40,44 40,72 10,54" fill="url(#lF)"/>
+      <polygon points="40,44 70,26 70,54 40,72" fill="url(#rF)"/>
+      <line x1="40" y1="8" x2="40" y2="44" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+    </svg>
+
+    <div class="lock-badge">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <rect x="5" y="9" width="10" height="8" rx="2"/>
+        <path d="M7 9V7a3 3 0 016 0v2"/>
+      </svg>
+      Admin Portal
+    </div>
+    <div class="lock-title">Locked</div>
+    <div class="lock-sub">Enter PIN to access the admin panel</div>
+  </div>
+
+  <div class="pin-card" id="pinCard">
+    <div class="time-display">
+      <div class="time-clock" id="timeClock">00:00</div>
+      <div class="time-date" id="timeDate">—</div>
+    </div>
+
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot" id="d0"></div>
+      <div class="pin-dot" id="d1"></div>
+      <div class="pin-dot" id="d2"></div>
+      <div class="pin-dot" id="d3"></div>
+      <div class="pin-dot" id="d4"></div>
+      <div class="pin-dot" id="d5"></div>
+    </div>
+
+    <div class="error-msg" id="errorMsg">Incorrect PIN. Try again.</div>
+
+    <div class="numpad">
+      <!-- Row 1 -->
+      <button class="num-btn" data-n="1" onclick="pressNum('1',this)">1<span class="num-sub"></span></button>
+      <button class="num-btn" data-n="2" onclick="pressNum('2',this)">2<span class="num-sub">ABC</span></button>
+      <button class="num-btn" data-n="3" onclick="pressNum('3',this)">3<span class="num-sub">DEF</span></button>
+      <!-- Row 2 -->
+      <button class="num-btn" data-n="4" onclick="pressNum('4',this)">4<span class="num-sub">GHI</span></button>
+      <button class="num-btn" data-n="5" onclick="pressNum('5',this)">5<span class="num-sub">JKL</span></button>
+      <button class="num-btn" data-n="6" onclick="pressNum('6',this)">6<span class="num-sub">MNO</span></button>
+      <!-- Row 3 -->
+      <button class="num-btn" data-n="7" onclick="pressNum('7',this)">7<span class="num-sub">PQRS</span></button>
+      <button class="num-btn" data-n="8" onclick="pressNum('8',this)">8<span class="num-sub">TUV</span></button>
+      <button class="num-btn" data-n="9" onclick="pressNum('9',this)">9<span class="num-sub">WXYZ</span></button>
+      <!-- Row 4 -->
+      <button class="num-btn del-btn" onclick="pressDelete(this)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M21 4H8l-7 8 7 8h13a2 2 0 002-2V6a2 2 0 00-2-2z"/><line x1="18" y1="9" x2="13" y2="14"/><line x1="13" y1="9" x2="18" y2="14"/>
+        </svg>
+      </button>
+      <button class="num-btn zero-btn" data-n="0" onclick="pressNum('0',this)">0</button>
+      <div></div>
+    </div>
+  </div>
+
+  <div class="lock-footer">
+    Payslip Status Portal &nbsp;·&nbsp; <strong>Admin Only</strong><br>
+    Unauthorized access is prohibited.
+  </div>
+</div>
+
+<!-- Unlock success overlay -->
+<div class="unlock-overlay" id="unlockOverlay">
+  <div class="unlock-check">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  </div>
+  <div class="unlock-text">Access Granted</div>
+  <div class="unlock-sub">Redirecting to Admin Panel…</div>
+</div>
+
+<script>
+  const CORRECT_PIN = '052026';
+  const SESSION_KEY = 'admin_session_v1';
+  const SESSION_MAX = 9 * 60 * 60 * 1000; // 9 hours
+
+  let entered = '';
+
+  // ── On load: check if already unlocked ──
+  (function checkSession() {
+    try {
+      const raw = sessionStorage.getItem(SESSION_KEY);
+      if (!raw) return;
+      const s = JSON.parse(raw);
+      if (s.unlocked && Date.now() - s.ts < SESSION_MAX) {
+        // Still valid — go straight to admin
+        window.location.replace('admin.html');
+      } else {
+        sessionStorage.removeItem(SESSION_KEY);
+      }
+    } catch(e) { sessionStorage.removeItem(SESSION_KEY); }
+  })();
+
+  // ── Clock ──
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('timeClock').textContent = `${h}:${m}`;
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    document.getElementById('timeDate').textContent =
+      `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+  }
+  updateClock();
+  setInterval(updateClock, 10000);
+
+  // ── Dots update ──
+  function updateDots() {
+    for (let i = 0; i < 6; i++) {
+      const dot = document.getElementById('d' + i);
+      dot.className = 'pin-dot' + (i < entered.length ? ' filled' : '');
+    }
+  }
+
+  // ── Press num ──
+  window.pressNum = function(n, btn) {
+    if (entered.length >= 6) return;
+    addRipple(btn);
+    btn.classList.add('pressed');
+    setTimeout(() => btn.classList.remove('pressed'), 120);
+
+    entered += n;
+    updateDots();
+    hideError();
+
+    if (entered.length === 6) {
+      setTimeout(checkPin, 120);
+    }
+  };
+
+  // ── Delete ──
+  window.pressDelete = function(btn) {
+    addRipple(btn);
+    if (!entered.length) return;
+    entered = entered.slice(0, -1);
+    updateDots();
+    hideError();
+  };
+
+  // ── Keyboard support ──
+  document.addEventListener('keydown', e => {
+    if (e.key >= '0' && e.key <= '9') {
+      const btn = document.querySelector(`.num-btn[data-n="${e.key}"]`);
+      if (btn) pressNum(e.key, btn);
+    } else if (e.key === 'Backspace') {
+      const delBtn = document.querySelector('.del-btn');
+      if (delBtn) pressDelete(delBtn);
+    }
+  });
+
+  // ── Check PIN ──
+  function checkPin() {
+    if (entered === CORRECT_PIN) {
+      unlockSuccess();
+    } else {
+      showError();
+      document.getElementById('pinCard').classList.add('shake');
+      // Flash dots red
+      for (let i = 0; i < 6; i++) {
+        document.getElementById('d' + i).className = 'pin-dot error';
+      }
+      setTimeout(() => {
+        document.getElementById('pinCard').classList.remove('shake');
+        entered = '';
+        updateDots();
+      }, 600);
+    }
+  }
+
+  function unlockSuccess() {
+    // Save session
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ unlocked: true, ts: Date.now() }));
+    // Show overlay
+    document.getElementById('unlockOverlay').classList.add('show');
+    setTimeout(() => {
+      window.location.replace('admin.html');
+    }, 1200);
+  }
+
+  function showError() {
+    document.getElementById('errorMsg').classList.add('visible');
+  }
+
+  function hideError() {
+    document.getElementById('errorMsg').classList.remove('visible');
+  }
+
+  // ── Ripple ──
+  function addRipple(btn) {
+    const r = document.createElement('span');
+    r.className = 'ripple';
+    r.style.left = '50%';
+    r.style.top  = '50%';
+    btn.appendChild(r);
+    setTimeout(() => r.remove(), 400);
+  }
+</script>
+</body>
+</html>
